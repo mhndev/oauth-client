@@ -2,11 +2,10 @@
 ## Php OAuth Client (Sdk) 
 
 tokens table structure : 
+
+
 ```
 
-
-
-/*
 
     CREATE TABLE tokens (
         client_id TEXT NOT NULL PRIMARY KEY,
@@ -16,7 +15,5 @@ tokens table structure :
         expires_at datetime
     );
 
- */
- 
  
 ```
