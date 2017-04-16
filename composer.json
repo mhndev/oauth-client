@@ -1,0 +1,37 @@
+{
+  "name": "mhndev/oauth-client",
+  "description": "php open authentication server sdk",
+  "keywords": ["auth", "authentication", "open authentication", "oauth client"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Majid Abdolhosseini",
+      "email": "majid@mhndev.com",
+      "homepage":"http://mhndev.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "mhndev\\oauthClient\\": "src"
+    }
+  },
+  "require": {
+    "php": ">=5.6",
+    "mhndev/value-objects" : "1.*",
+    "guzzlehttp/guzzle": "6.*",
+    "ext-PDO": "*",
+    "ext-sqlite3": "*"
+  },
+
+  "require-dev": {
+    "phpunit/phpunit": "6.*"
+  },
+
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
