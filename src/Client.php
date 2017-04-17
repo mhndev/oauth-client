@@ -114,11 +114,16 @@ class Client extends aClient implements iOAuthClient
         catch (ClientException $e){
 
             if($e->getCode() == 422){
-
                 $responseBody = $this->getResult($e->getResponse());
 
+                $user = User::fromArray($responseBody['error']['user']);
+
                 if($responseBody['error']['error_codes'] == 'userAlreadyExist'){
-                    throw new UserAlreadyExistOnOauthServer;
+                    throw new UserAlreadyExistOnOauthServer(
+                        'user already exist',
+                        $user,
+                        $e->getResponse()
+                    );
                 }
 
                 throw new InvalidArgumentException(
