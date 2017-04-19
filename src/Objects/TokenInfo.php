@@ -71,4 +71,5 @@ class TokenInfo extends BaseObject
     {
         return $this->type;
     }
+
 }
