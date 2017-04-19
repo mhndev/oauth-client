@@ -62,4 +62,13 @@ class TokenInfo extends BaseObject
     {
         return $this->user;
     }
+
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
 }
