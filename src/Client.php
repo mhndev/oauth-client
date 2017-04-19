@@ -5,8 +5,8 @@ use GuzzleHttp\Exception\ClientException;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\IdentifierNotFoundOnOauthServer;
 use mhndev\oauthClient\exceptions\InvalidArgumentException;
-use mhndev\oauthClient\exceptions\InvalidToken;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
+use mhndev\oauthClient\exceptions\InvalidTokenException;
 use mhndev\oauthClient\exceptions\ModelNotFoundException;
 use mhndev\oauthClient\exceptions\OAuthServerBadResponseException;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
@@ -32,7 +32,7 @@ class Client extends aClient implements iOAuthClient
     /**
      * @param Token $token
      * @return TokenInfo
-     * @throws InvalidToken
+     * @throws InvalidTokenException
      */
     public function getTokenInfo(Token $token)
     {
@@ -47,7 +47,7 @@ class Client extends aClient implements iOAuthClient
 
         catch (ClientException $e){
             if($e->getCode() == 401){
-                throw new InvalidToken('token is not valid.');
+                throw new InvalidTokenException('token is not valid.');
             }
         }
 
@@ -178,7 +178,7 @@ class Client extends aClient implements iOAuthClient
             }
 
             if($e->getCode() == 401){
-                throw new InvalidToken(sprintf(
+                throw new InvalidTokenException(sprintf(
                     'client token is not valid'
                 ));
             }

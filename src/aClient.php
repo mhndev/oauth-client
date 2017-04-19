@@ -28,17 +28,6 @@ abstract class aClient
     /**
      * @var string
      */
-    protected $client_id;
-
-
-    /**
-     * @var string
-     */
-    protected $client_secret;
-
-    /**
-     * @var string
-     */
     protected $serverUrl;
 
 
@@ -51,23 +40,16 @@ abstract class aClient
      * Client constructor.
      * @param \GuzzleHttp\Client $client
      * @param string $serverUrl
-     * @param string $client_id
-     * @param string $client_secret
      * @param iTokenRepository $tokenRepository
      */
     public function __construct(
         \GuzzleHttp\Client $client,
         $serverUrl,
-        $client_id,
-        $client_secret,
         iTokenRepository $tokenRepository
     )
     {
         $this->client = $client;
         $this->serverUrl = $serverUrl;
-        $this->client_id = $client_id;
-        $this->client_secret = $client_secret;
-
         $this->tokenRepository = $tokenRepository;
     }
 

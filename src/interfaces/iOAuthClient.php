@@ -3,10 +3,12 @@ namespace mhndev\oauthClient\interfaces;
 
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
+use mhndev\oauthClient\exceptions\InvalidTokenException;
 use mhndev\oauthClient\exceptions\OAuthServerBadResponseException;
 use mhndev\oauthClient\exceptions\UserAlreadyExistOnOauthServer;
 use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\Objects\TokenInfo;
+use mhndev\valueObjects\implementations\Token;
 
 /**
  * Interface iClient
@@ -14,6 +16,21 @@ use mhndev\oauthClient\Objects\TokenInfo;
  */
 interface iOAuthClient
 {
+
+
+    /**
+     *
+     * This method get a token instance and output token info which includes :
+     *
+     * 1 - token scopes
+     * 2 - user object (if token is related to an user and not a client)
+     *
+     * @param Token $token
+     * @return TokenInfo
+     * @throws InvalidTokenException
+     */
+    public function getTokenInfo(Token $token);
+
 
     /**
      * This method checks if there is any token for specified client_id in table

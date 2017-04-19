@@ -2,10 +2,10 @@
 namespace mhndev\oauthClient\exceptions;
 
 /**
- * Class InvalidToken
+ * Class InvalidTokenException
  * @package mhndev\oauthClient\exceptions
  */
-class InvalidToken extends \Exception
+class InvalidTokenException extends \Exception
 {
 
 }
