@@ -11,8 +11,10 @@ use mhndev\oauthClient\exceptions\ModelNotFoundException;
 use mhndev\oauthClient\exceptions\OAuthServerBadResponseException;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
 use mhndev\oauthClient\exceptions\UserAlreadyExistOnOauthServer;
+use mhndev\oauthClient\exceptions\ValidationException;
 use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\interfaces\iOAuthClient;
+use mhndev\oauthClient\Objects\Identifier;
 use mhndev\oauthClient\Objects\TokenInfo;
 use mhndev\oauthClient\Objects\User;
 use mhndev\valueObjects\implementations\Token;
@@ -96,11 +98,15 @@ class Client extends aClient implements iOAuthClient
      * @param string $name
      * @param string $password
      * @param array $identifiers
-     * @return static
+     * @param iToken $token
+     * @return User
      * @throws UserAlreadyExistOnOauthServer
+     * @throws ValidationException
+     * @throws \Exception
      */
-    public function register($name, $password, array $identifiers)
+    public function register($name, $password, array $identifiers, iToken $token)
     {
+
         try{
             $response = $this->client->post($this->endpoint(__FUNCTION__), [
                 'headers' => [ 'Accept' => 'application/json' ],
@@ -113,29 +119,55 @@ class Client extends aClient implements iOAuthClient
 
         catch (ClientException $e){
 
+            // un processable entity (usually validation error)
             if($e->getCode() == 422){
+
                 $responseBody = $this->getResult($e->getResponse());
 
-                $user = User::fromArray($responseBody['error']['user']);
+                // check whether error is user already exist in database or not
+                if( !empty($responseBody['error']['info']['failed']) ){
 
-                if($responseBody['error']['error_codes'] == 'userAlreadyExist'){
-                    throw new UserAlreadyExistOnOauthServer(
-                        'user already exist',
-                        $user,
-                        $e->getResponse()
-                    );
+                    foreach($responseBody['error']['info']['failed'] as $failed_rules){
+                        foreach ($failed_rules as $key => $value){
+
+                            if(
+                                is_array($value) &&
+                                in_array('UniqueIdentifier', array_keys($value) )
+                            ){
+
+                                $user = $this->getWhois( $key, $identifiers[$key], $token)->getUser();
+
+                                throw new UserAlreadyExistOnOauthServer(
+                                    'user already exist',
+                                    $user,
+                                    Identifier::fromArray([
+                                        'type' => $key,
+                                        'value' => $identifiers[$key],
+                                        'verified' => true
+                                    ]),
+                                    $e->getResponse()
+                                );
+
+                            }
+                        }
+                    }
+
+
                 }
 
-                throw new InvalidArgumentException(
-                    json_encode($responseBody['error']['errors'])
+                throw new ValidationException(
+                    $responseBody['error']['message'],
+                    $responseBody['error']['code'],
+                    $responseBody['error']['info']['messages'],
+                    $responseBody['error']['info']['failed']
                 );
             }
 
         }
 
         catch (\Exception $e){
-            var_dump($e->getMessage());
-            die();
+            throw $e;
+            //do nothing
         }
 
 

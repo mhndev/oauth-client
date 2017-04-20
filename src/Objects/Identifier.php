@@ -13,7 +13,7 @@ class Identifier extends BaseObject
 
     const MOBILE = 'mobile';
 
-    public static $valid_identifier_types = [self::EMAIL, self::MOBILE];
+    public static $valid_identifier_types = [ self::EMAIL, self::MOBILE ];
 
     /**
      * @var string

@@ -5,9 +5,9 @@ use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\InvalidTokenException;
 use mhndev\oauthClient\exceptions\OAuthServerBadResponseException;
-use mhndev\oauthClient\exceptions\UserAlreadyExistOnOauthServer;
 use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\Objects\TokenInfo;
+use mhndev\oauthClient\Objects\User;
 use mhndev\valueObjects\implementations\Token;
 
 /**
@@ -58,10 +58,11 @@ interface iOAuthClient
      * @param string $name
      * @param string $password
      * @param array $identifiers
-     * @return static
-     * @throws UserAlreadyExistOnOauthServer
+     * @param iToken $token
+     * @return User
+     * @internal param array $identifiers
      */
-    public function register($name, $password, array $identifiers);
+    public function register($name, $password, array $identifiers, iToken $token);
 
 
     /**
