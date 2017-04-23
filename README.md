@@ -3,10 +3,7 @@
 
 tokens table structure : 
 
-
 ```
-
-
     CREATE TABLE tokens (
         client_id TEXT NOT NULL PRIMARY KEY,
         client_secret TEXT NOT NULL,
@@ -15,59 +12,98 @@ tokens table structure :
         expires_at datetime
     );
 
- 
- 
- 
 ```
- Sample Usage 
+
 
 ```php
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 
 require_once 'vendor/autoload.php';
 
+
 $client_id = 1;
-$client_secret = 'client secret';
-$client_token = 'sample client token';
-$user_token = 'sample user token';
-
-
+$client_secret = 'DONjJxACnkVqzHPoHOoUmfEmUjnDnXJiT0PuqCzO';
 
 $tokenRepository = new \mhndev\oauthClient\repository\TokenRepositorySqlite(
     (new \mhndev\oauthClient\SqLiteConnection(__DIR__.DIRECTORY_SEPARATOR.'db.sqlite'))->connect()
 );
 
-$oauth_client = new \mhndev\oauthClient\Client(
-    new \GuzzleHttp\Client(),
-    'http://dev.digipeyk.com:8030',
-    $client_id,
-    $client_secret,
-    $tokenRepository
+$guzzleClient = new \GuzzleHttp\Client();
+
+$guzzleHandler = new \mhndev\oauthClient\handlers\GuzzleHandler(
+    $guzzleClient,
+    'http://dev.digipeyk.com:8030'
 );
 
-$token = $oauth_client->getClientToken($client_id,$client_secret);
+$oauth_client = new \mhndev\oauthClient\Client($guzzleHandler, $tokenRepository);
 
-echo $token->getCredentials();
+$token = $oauth_client->getClientToken($client_id, $client_secret);
 
-$whoIs = $oauth_client->getWhois(
-    \mhndev\oauthClient\Objects\Identifier::EMAIL,
+//register endpoint
+$user_register = $oauth_client->register(
+    'hamid',
+    '123456',
+    ['email'=>'ma2jid8911303@gmail.com'],
+    $token
+);
+
+var_dump($user_register);
+
+// whois endpoint
+
+$user_whoIs = $oauth_client->getWhois(
+    'email',
     'majid8911303@gmail.com',
     $token
 );
 
 
-$tokenInfo = $oauth_client->getTokenInfo(
-    new \mhndev\valueObjects\implementations\Token(
-        $user_token,
-        'Bearer'
+var_dump($user_whoIs);
+
+// get Token Info
+
+$tokenValueObject = new \mhndev\valueObjects\implementations\Token(
+    $token->getCredentials(), $token->getType()
+);
+
+$tokenInfo = $oauth_client->getTokenInfo($tokenValueObject);
+
+var_dump($tokenInfo);
+
+
+
+echo '<br><br><br><br><br>';
+
+// now using mock handler instead as handler
+
+$mockHandler = new \mhndev\oauthClient\handlers\MockHandler();
+
+$oauth_client2 = new \mhndev\oauthClient\Client($mockHandler, $tokenRepository);
+
+
+$tokenFromMock = $oauth_client2->getClientToken('wefwergderf', 'werwrgfer');
+
+var_dump($tokenFromMock);
+
+$result = $oauth_client2->register(
+    'majid',
+    '123456',
+    ['email' => 'majid@gmail.com'],
+    new \mhndev\oauthClient\entity\common\Token(
+        'Bearer',
+        '34r3t354t54tr',
+        $client_id,
+        $client_secret
     )
 );
 
-$oauth_client->register('mj', '123456', ['mobile' => '09124971706' ]);
 
-
-var_dump($tokenInfo->getUser());
-var_dump($whoIs);
-die();
+var_dump($result);
 
 
 ```
+
