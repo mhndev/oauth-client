@@ -4,6 +4,7 @@ namespace mhndev\oauthClient\handlers;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
+use mhndev\oauthClient\exceptions\ClientNotFoundException;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\IdentifierNotFoundOnOauthServer;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
@@ -169,6 +170,13 @@ class GuzzleHandler implements iHandler
             );
 
         } catch (ClientException $e){
+
+            if($e->getCode() == 401){
+                throw new ClientNotFoundException(sprintf(
+                    'client with id %s is not valid by oauth server',
+                    $client_id
+                ));
+            }
 
             throw new OAuthServerBadResponseException($e->getMessage());
         }
