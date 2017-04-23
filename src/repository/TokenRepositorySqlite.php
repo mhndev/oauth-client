@@ -3,6 +3,7 @@ namespace mhndev\oauthClient\repository;
 
 use DateTime;
 use mhndev\oauthClient\entity\common\Token;
+use mhndev\oauthClient\exceptions\DataSourceConnectionException;
 use mhndev\oauthClient\exceptions\ModelNotFoundException;
 use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\interfaces\repository\iTokenRepository;
@@ -18,11 +19,27 @@ class TokenRepositorySqlite extends aSqliteRepository implements iTokenRepositor
     /**
      * @param $client_id
      * @return iToken
+     * @throws DataSourceConnectionException
      */
     function findByClientId($client_id)
     {
         $queryString = 'SELECT * FROM tokens WHERE "client_id"= :client_id';
-        $qry = $this->dataSource->prepare($queryString);
+
+        try{
+            $qry = $this->dataSource->prepare($queryString);
+
+            if($qry == false){
+                throw new DataSourceConnectionException(sprintf(
+                    $queryString. ' return false'
+                ));
+            }
+
+        }
+        catch (\PDOException $e){
+            throw new DataSourceConnectionException($e->getMessage());
+        }
+
+
         $qry->bindValue(':client_id', $client_id, \PDO::PARAM_STR);
 
         $result = $qry->execute();
@@ -52,11 +69,27 @@ class TokenRepositorySqlite extends aSqliteRepository implements iTokenRepositor
     /**
      * @param iToken $token
      * @return mixed
+     * @throws DataSourceConnectionException
      */
     function writeOrUpdate(iToken $token)
     {
         $queryString = 'SELECT * FROM tokens WHERE "client_id"= :client_id';
-        $qry = $this->dataSource->prepare($queryString);
+
+
+        try{
+            $qry = $this->dataSource->prepare($queryString);
+
+            if($qry == false){
+                throw new DataSourceConnectionException(sprintf(
+                    $queryString. ' return false'
+                ));
+            }
+
+        }
+        catch (\PDOException $e){
+            throw new DataSourceConnectionException($e->getMessage());
+        }
+
         $qry->bindValue(':client_id', $token->getClientId(), \PDO::PARAM_STR);
         $qry->execute();
         $result = $qry->fetchAll();
@@ -113,7 +146,20 @@ class TokenRepositorySqlite extends aSqliteRepository implements iTokenRepositor
                              expires_at) VALUES (:client_id, :client_secret, :type,
                              :credentials, :expires_at)';
 
-            $qry = $this->dataSource->prepare($queryString);
+            try{
+                $qry = $this->dataSource->prepare($queryString);
+
+                if($qry == false){
+                    throw new DataSourceConnectionException(sprintf(
+                        $queryString. ' return false'
+                    ));
+                }
+
+            }
+            catch (\PDOException $e){
+                throw new DataSourceConnectionException($e->getMessage());
+            }
+
 
             $qry->bindValue(':client_id', $token->getClientId(), \PDO::PARAM_STR);
             $qry->bindValue(':client_secret', $token->getClientSecret(), \PDO::PARAM_STR);
@@ -130,14 +176,27 @@ class TokenRepositorySqlite extends aSqliteRepository implements iTokenRepositor
     }
 
 
-
     /**
      * @return bool
+     * @throws DataSourceConnectionException
      */
     function deleteAll()
     {
         $queryString = 'DELETE FROM tokens';
-        $qry = $this->dataSource->prepare($queryString);
+        try{
+            $qry = $this->dataSource->prepare($queryString);
+
+            if($qry == false){
+                throw new DataSourceConnectionException(sprintf(
+                    $queryString. ' return false'
+                ));
+            }
+
+        }
+        catch (\PDOException $e){
+            throw new DataSourceConnectionException($e->getMessage());
+        }
+
         $result = $qry->execute();
 
         $this->handleError($qry);
@@ -149,11 +208,25 @@ class TokenRepositorySqlite extends aSqliteRepository implements iTokenRepositor
     /**
      * @param iToken $token
      * @return mixed
+     * @throws DataSourceConnectionException
      */
     function delete(iToken $token)
     {
         $queryString = 'DELETE FROM tokens WHERE client_id=":client_id"';
-        $qry = $this->dataSource->prepare($queryString);
+        try{
+            $qry = $this->dataSource->prepare($queryString);
+
+            if($qry == false){
+                throw new DataSourceConnectionException(sprintf(
+                    $queryString. ' return false'
+                ));
+            }
+
+        }
+        catch (\PDOException $e){
+            throw new DataSourceConnectionException($e->getMessage());
+        }
+
 
         $qry->bindValue(':client_id', $token->getClientId(), \PDO::PARAM_STR);
 
