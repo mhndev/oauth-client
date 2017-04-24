@@ -5,12 +5,10 @@ use mhndev\oauthClient\entity\common\Token as EntityToken;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\InvalidTokenException;
-use mhndev\oauthClient\exceptions\ModelNotFoundException;
 use mhndev\oauthClient\exceptions\OAuthServerBadResponseException;
 use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\iOAuthClient;
-use mhndev\oauthClient\interfaces\repository\iTokenRepository;
 use mhndev\oauthClient\Objects\TokenInfo;
 use mhndev\oauthClient\Objects\User;
 use mhndev\valueObjects\implementations\Token as TokenValueObject;
@@ -28,19 +26,12 @@ class Client implements iOAuthClient
     protected $handler;
 
     /**
-     * @var iTokenRepository
-     */
-    protected $tokenRepository;
-
-    /**
      * Client constructor.
      * @param iHandler $handler
-     * @param iTokenRepository $tokenRepository
      */
-    public function __construct(iHandler $handler, iTokenRepository $tokenRepository)
+    public function __construct(iHandler $handler)
     {
         $this->handler = $handler;
-        $this->tokenRepository = $tokenRepository;
     }
 
 
@@ -80,20 +71,7 @@ class Client implements iOAuthClient
      */
     public function getClientToken($client_id, $client_secret)
     {
-        try{
-            $token = $this->tokenRepository->findByClientId($client_id);
-
-            if($token->getExpiresAt() <= new \DateTime() ){
-                $token = $this->getNewClientToken($client_id, $client_secret);
-
-                $this->tokenRepository->writeOrUpdate($token);
-            }
-        }
-        catch (ModelNotFoundException $e) {
-            $token = $this->getNewClientToken($client_id, $client_secret);
-        }
-
-        return $token;
+        return $this->getNewClientToken($client_id, $client_secret);
     }
 
     /**

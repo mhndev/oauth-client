@@ -18,9 +18,14 @@
   "require": {
     "php": ">=5.6",
     "mhndev/value-objects" : "1.*",
-    "guzzlehttp/guzzle": "6.*",
-    "ext-PDO": "*",
-    "ext-sqlite3": "*"
+    "guzzlehttp/guzzle": "6.*"
+//    "ext-PDO": "*",
+//    "ext-sqlite3": "*"
+  },
+
+  "suggest":{
+      "ext-PDO": "*",
+      "ext-sqlite3": "*"
   },
 
   "require-dev": {

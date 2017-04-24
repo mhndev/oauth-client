@@ -17,6 +17,7 @@ abstract class aSqliteRepository
     /**
      * aSqliteRepository constructor.
      * @param \PDO $dataSource
+     * @throws \Exception
      */
     public function __construct(\PDO $dataSource)
     {
