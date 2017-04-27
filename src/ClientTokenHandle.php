@@ -59,8 +59,6 @@ class ClientTokenHandle extends Client implements iOAuthClient
 
             if($token->getExpiresAt() <= new \DateTime() ){
                 $token = $this->getNewClientToken($client_id, $client_secret);
-
-                $this->tokenRepository->writeOrUpdate($token);
             }
         }
         catch (ModelNotFoundException $e) {
@@ -70,5 +68,11 @@ class ClientTokenHandle extends Client implements iOAuthClient
         return $token;
     }
 
+    public function getNewClientToken($client_id, $client_secret, array $scopes = [])
+    {
+        $token = parent::getNewClientToken($client_id, $client_secret, $scopes);
+        $this->tokenRepository->writeOrUpdate($token);
+        return $token;
+    }
 
 }
