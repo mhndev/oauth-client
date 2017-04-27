@@ -63,23 +63,21 @@ class Client implements iOAuthClient
      * @param string $client_id
      * @param string $client_secret
      *
-     * @throws ConnectOAuthServerException
-     * @throws OAuthServerBadResponseException
-     * @throws \Exception
-     *
+     * @param array $scopes
      * @return iToken
      */
-    public function getClientToken($client_id, $client_secret)
+    public function getClientToken($client_id, $client_secret, array $scopes  =[])
     {
-        return $this->getNewClientToken($client_id, $client_secret);
+        return $this->getNewClientToken($client_id, $client_secret, $scopes);
     }
 
     /**
      * @param $client_id
      * @param $client_secret
+     * @param array $scopes
      * @return iToken
      */
-    protected function getNewClientToken($client_id, $client_secret)
+    public function getNewClientToken($client_id, $client_secret, array $scopes  =[])
     {
         $arrayToken = $this->handler->getClientTokenFromOAuthServer(
             $client_id,

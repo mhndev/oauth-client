@@ -42,13 +42,10 @@ interface iOAuthClient
      * @param string $client_id
      * @param string $client_secret
      *
-     * @throws ConnectOAuthServerException
-     * @throws OAuthServerBadResponseException
-     * @throws \Exception
-     *
+     * @param array $scopes
      * @return iToken
      */
-    public function getClientToken($client_id, $client_secret);
+    public function getClientToken($client_id, $client_secret, array $scopes = []);
 
 
     /**

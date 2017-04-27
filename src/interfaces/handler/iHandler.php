@@ -32,12 +32,10 @@ interface iHandler
     /**
      * @param $client_id
      * @param $client_secret
+     * @param array $scopes
      * @return mixed
-     * @throws ConnectOAuthServerException
-     * @throws OAuthServerBadResponseException
-     * @throws \Exception
      */
-    public function getClientTokenFromOAuthServer($client_id, $client_secret);
+    public function getClientTokenFromOAuthServer($client_id, $client_secret, array $scopes = []);
 
     /**
      * This method register new user to oauth server

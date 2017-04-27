@@ -8,7 +8,6 @@ use mhndev\oauthClient\exceptions\ClientNotFoundException;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\IdentifierNotFoundOnOauthServer;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
-use mhndev\oauthClient\exceptions\InvalidTokenException;
 use mhndev\oauthClient\exceptions\OAuthServerBadResponseException;
 use mhndev\oauthClient\exceptions\OAuthServerConnectionException;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
@@ -18,7 +17,6 @@ use mhndev\oauthClient\exceptions\ValidationException;
 use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\Objects\Identifier;
-use mhndev\oauthClient\Objects\TokenInfo;
 use mhndev\oauthClient\Objects\User;
 use mhndev\valueObjects\implementations\Token;
 use Psr\Http\Message\ResponseInterface;
@@ -119,7 +117,7 @@ class GuzzleHandler implements iHandler
 
         }catch (ConnectException $e){
 
-            throw new OAuthServerConnectionException($e->getMessage(), $e->getCode());
+            throw new OAuthServerConnectionException($e->getMessage(), $e->getCode() );
 
         }catch (\Exception $e){
             /*
@@ -137,24 +135,32 @@ class GuzzleHandler implements iHandler
     /**
      * @param $client_id
      * @param $client_secret
+     * @param array $scopes
      * @return mixed
+     * @throws ClientNotFoundException
      * @throws ConnectOAuthServerException
      * @throws OAuthServerBadResponseException
      * @throws \Exception
      */
-    public function getClientTokenFromOAuthServer($client_id, $client_secret)
+    public function getClientTokenFromOAuthServer($client_id, $client_secret, array $scopes = [])
     {
         $uri = $this->endpoint(__FUNCTION__);
+
+        $json = [
+            'grant_type'    => 'client_credentials',
+            'client_id'     => $client_id,
+            'client_secret' => $client_secret
+        ];
+
+        if(!empty($scopes)){
+            $json['scope'] = implode(' ', $scopes);
+        }
 
         $options = [
             'headers' => [
                 'Accept' => 'application/json'
             ],
-            'json' => [
-                'grant_type'    => 'client_credentials',
-                'client_id'     => $client_id,
-                'client_secret' => $client_secret
-            ]
+            'json' => $json
         ];
 
         try{
