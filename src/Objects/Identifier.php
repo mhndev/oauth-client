@@ -69,7 +69,10 @@ class Identifier extends BaseObject
 
         //  ($identifier_type == Identifier::MOBILE)
         else {
-            $result = [ $identifier_type => (new MobilePhone($identifier_value))->toArray() ];
+            // mobile string with zero
+            $msz = (new MobilePhone($identifier_value))->format(MobilePhone::WithZero);
+
+            $result = [$identifier_type => $msz];
         }
 
         return $result;
