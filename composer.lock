@@ -186,16 +186,16 @@
         },
         {
             "name": "mhndev/php-std",
-            "version": "1.5.2",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mhndev/php-std.git",
-                "reference": "cf04318c51f0d61956ca89ee87cd5d4b2dde4133"
+                "reference": "6aaaba8d44bcc8847b9ed35857c17e6aca529359"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mhndev/php-std/zipball/cf04318c51f0d61956ca89ee87cd5d4b2dde4133",
-                "reference": "cf04318c51f0d61956ca89ee87cd5d4b2dde4133",
+                "url": "https://api.github.com/repos/mhndev/php-std/zipball/6aaaba8d44bcc8847b9ed35857c17e6aca529359",
+                "reference": "6aaaba8d44bcc8847b9ed35857c17e6aca529359",
                 "shasum": ""
             },
             "require": {
@@ -230,7 +230,7 @@
             "keywords": [
                 "php standard library"
             ],
-            "time": "2017-04-30T07:45:30+00:00"
+            "time": "2017-05-01T08:50:18+00:00"
         },
         {
             "name": "mhndev/value-objects",

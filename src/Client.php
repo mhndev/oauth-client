@@ -2,10 +2,8 @@
 namespace mhndev\oauthClient;
 
 use mhndev\oauthClient\entity\common\Token as EntityToken;
-use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\InvalidTokenException;
-use mhndev\oauthClient\exceptions\OAuthServerBadResponseException;
 use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\iOAuthClient;

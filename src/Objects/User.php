@@ -1,6 +1,7 @@
 <?php
-
 namespace mhndev\oauthClient\Objects;
+
+use mhndev\oauthClient\exceptions\InvalidArgumentException;
 
 /**
  * Class User
@@ -30,7 +31,7 @@ class User extends BaseObject
     protected $updated_at;
 
     /**
-     * @var array
+     * @var Identifiers
      */
     protected $identifiers;
 
@@ -68,7 +69,7 @@ class User extends BaseObject
     }
 
     /**
-     * @return array of Identifier object
+     * @return Identifiers of Identifier object
      */
     public function getIdentifiers()
     {
@@ -77,19 +78,31 @@ class User extends BaseObject
 
 
     /**
-     * @param array $identifiers
+     * @param array | Identifiers $identifiers
      * @return $this
      */
-    public function setIdentifiers(array $identifiers)
+    public function setIdentifiers($identifiers)
     {
-        $ar = [];
-
-        foreach ($identifiers as $identifier){
-
-            $ar[] = Identifier::fromArray($identifier);
+        if($identifiers instanceof Identifiers){
+            $this->identifiers = $identifiers;
         }
+        elseif (is_array($identifiers)){
 
-        $this->identifiers = $ar;
+            $ar = [];
+
+            foreach ($identifiers as $identifier) {
+                $ar[] = Identifier::fromArray($identifier);
+            }
+
+            $this->identifiers = new Identifiers($ar);
+        }
+        else{
+            throw new InvalidArgumentException(sprintf(
+                'just array or %s are acceptable, given : %s',
+                Identifiers::class,
+                is_object($identifiers) ? get_class($identifiers) : gettype($identifiers)
+            ));
+        }
 
         return $this;
     }
