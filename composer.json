@@ -18,6 +18,7 @@
   "require": {
     "php": ">=5.6",
     "mhndev/value-objects" : "1.*",
+    "mhndev/php-std": "1.*",
     "guzzlehttp/guzzle": "6.*"
   },
 
