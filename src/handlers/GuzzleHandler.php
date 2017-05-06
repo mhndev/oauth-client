@@ -358,6 +358,49 @@ class GuzzleHandler implements iHandler
 
 
     /**
+     * Get a list of users given their ids.
+     *
+     * @param array $userIds
+     * @param iToken $token     users.read scope is required
+     *
+     * @throws TokenInvalidOrExpiredException
+     * @throws OAuthServerUnhandledError
+     *
+     * @return array
+     */
+    public function getUsers(array $userIds, iToken $token)
+    {
+        $uri = $this->endpoint(__FUNCTION__);
+        $options = [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => $token->__toString(),
+            ],
+            'query' => [
+                'ids' => $userIds,
+            ],
+        ];
+
+        try {
+            $response = $this->httpClient->get($uri, $options);
+        } catch (ClientException $e) {
+            if($e->getCode() == 401){
+                throw new TokenInvalidOrExpiredException(sprintf(
+                    'client token is not valid'
+                ));
+            }
+
+            if($e->getCode() >= 500){
+                throw new OAuthServerUnhandledError(sprintf(
+                    'oauth server unhandled exception'
+                ));
+            }
+        }
+
+        return $this->getResult($response);
+    }
+
+    /**
      * @param ResponseInterface $response
      * @param bool $returnArray
      * @return mixed

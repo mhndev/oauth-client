@@ -4,6 +4,8 @@ namespace mhndev\oauthClient\handlers;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\OAuthServerBadResponseException;
+use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
+use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
 use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\valueObjects\implementations\Token;
@@ -160,16 +162,32 @@ class MockHandler implements iHandler
 
     }
 
+    /**
+     * Get a list of users given their ids.
+     *
+     * @param array $userIds
+     * @param iToken $token     users.read scope is required
+     *
+     * @throws TokenInvalidOrExpiredException
+     * @throws OAuthServerUnhandledError
+     *
+     * @return array
+     */
+    public function getUsers(array $userIds, iToken $token)
+    {
+        return [];
+    }
 
     /**
      * @param $client_id
      * @param $client_secret
+     * @param array $scopes
      * @return array
      * @throws ConnectOAuthServerException
      * @throws OAuthServerBadResponseException
      * @throws \Exception
      */
-    public function getClientTokenFromOAuthServer($client_id, $client_secret)
+    public function getClientTokenFromOAuthServer($client_id, $client_secret, array $scopes = [])
     {
         $result = [
           "access_token"=> "45a2a110259a6a7cb6b481eacca2fa5f5aa67e61",
