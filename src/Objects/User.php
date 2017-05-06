@@ -21,6 +21,11 @@ class User extends BaseObject
     protected $name;
 
     /**
+     * @var string
+     */
+    protected $avatar_url;
+
+    /**
      * @var \DateTime
      */
     protected $created_at;
@@ -105,6 +110,14 @@ class User extends BaseObject
         }
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAvatarUrl()
+    {
+        return $this->avatar_url;
     }
 
 
