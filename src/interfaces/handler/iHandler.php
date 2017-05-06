@@ -5,6 +5,8 @@ use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\OAuthServerBadResponseException;
 use mhndev\oauthClient\exceptions\OAuthServerConnectionException;
+use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
+use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
 use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\valueObjects\implementations\Token;
 
@@ -67,5 +69,16 @@ interface iHandler
      */
     public function getWhois($identifier_type, $identifier_value, iToken $token);
 
-
+    /**
+     * Get a list of users given their ids.
+     *
+     * @param array $userIds
+     * @param iToken $token     users.read scope is required
+     *
+     * @throws TokenInvalidOrExpiredException
+     * @throws OAuthServerUnhandledError
+     *
+     * @return array
+     */
+    public function getUsers(array $userIds, iToken $token);
 }
