@@ -44,7 +44,7 @@ class Client implements iOAuthClient
      * @return TokenInfo
      * @throws InvalidTokenException
      */
-    public function getTokenInfo(iToken $token)
+    public function getTokenInfo($token)
     {
         $arrayTokenInfo = $this->handler->getTokenInfo($token);
 
@@ -73,7 +73,7 @@ class Client implements iOAuthClient
      * @param $client_id
      * @param $client_secret
      * @param array $scopes
-     * @return iToken
+     * @return \mhndev\oauthClient\interfaces\entity\iToken
      */
     public function getNewClientToken($client_id, $client_secret, array $scopes  =[])
     {
@@ -100,11 +100,11 @@ class Client implements iOAuthClient
      * @param string $name
      * @param string $password
      * @param array $identifiers
-     * @param iToken $token
+     * @param string $token
      * @return User
      * @internal param array $identifiers
      */
-    public function register($name, $password, array $identifiers, iToken $token)
+    public function register($name, $password, array $identifiers, $token)
     {
         $arrayUser = $this->handler->register($name, $password, $identifiers, $token)['result'];
 
@@ -119,12 +119,12 @@ class Client implements iOAuthClient
      *
      * @param string $identifier_type
      * @param string $identifier_value
-     * @param iToken|null $token
+     * @param string $token
      * @return TokenInfo
      * @throws InvalidIdentifierType
      * @throws \Exception
      */
-    public function getWhois($identifier_type, $identifier_value, iToken $token)
+    public function getWhois($identifier_type, $identifier_value, $token)
     {
         $arrayWhois = $this->handler->getWhois($identifier_type, $identifier_value, $token);
 
@@ -135,14 +135,14 @@ class Client implements iOAuthClient
      * Get a list of users given their ids.
      *
      * @param array $userIds
-     * @param iToken $token     users.read scope is required
+     * @param string $token     users.read scope is required
      *
      * @throws TokenInvalidOrExpiredException
      * @throws OAuthServerUnhandledError
      *
      * @return array
      */
-    public function getUsers(array $userIds, iToken $token)
+    public function getUsers(array $userIds, $token)
     {
         $users = $this->handler->getUsers($userIds, $token);
 

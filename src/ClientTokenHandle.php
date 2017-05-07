@@ -79,6 +79,7 @@ class ClientTokenHandle extends Client implements iOAuthClient
     public function getNewClientToken($client_id, $client_secret, array $scopes = [])
     {
         $token = parent::getNewClientToken($client_id, $client_secret, $scopes);
+
         $this->tokenRepository->writeOrUpdate($token);
 
         return $token;
