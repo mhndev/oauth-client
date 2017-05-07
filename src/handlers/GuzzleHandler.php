@@ -81,19 +81,19 @@ class GuzzleHandler implements iHandler
      * 1 - token scopes
      * 2 - user object (if token is related to an user and not a client)
      *
-     * @param iToken $token
+     * @param string $token
      * @return ResponseInterface
      * @throws OAuthServerConnectionException
      * @throws TokenInvalidOrExpiredException
      * @throws \Exception
      */
-    public function getTokenInfo(iToken $token)
+    public function getTokenInfo($token)
     {
         try{
             $response = $this->httpClient->get($this->endpoint(__FUNCTION__), [
                 'headers' => [
                     'Accept' => 'application/json',
-                    'Authorization' => $token->__toString(),
+                    'Authorization' => (string) $token,
                 ],
             ]);
 
@@ -206,7 +206,7 @@ class GuzzleHandler implements iHandler
      * @return array
      * @throws \Exception
      */
-    public function register($name, $password, array $identifiers, iToken $token)
+    public function register($name, $password, array $identifiers, $token)
     {
         try{
             $response = $this->httpClient->post($this->endpoint(__FUNCTION__), [
@@ -226,7 +226,7 @@ class GuzzleHandler implements iHandler
                 $this->ifUserAlreadyExistThrowException(
                     $e->getResponse(),
                     $identifiers,
-                    $token
+                    (string)$token
                 );
 
                 $this->throwValidationException($e->getResponse());
@@ -250,13 +250,13 @@ class GuzzleHandler implements iHandler
     /**
      * @param ResponseInterface $registerEndpointResponse
      * @param array $identifiers
-     * @param iToken $token
+     * @param string $token
      * @throws UserAlreadyExistOnOauthServer
      */
     protected function ifUserAlreadyExistThrowException(
         ResponseInterface $registerEndpointResponse,
         array $identifiers,
-        iToken $token
+        $token
     )
     {
         $responseBody = $this->getResult($registerEndpointResponse);
@@ -271,7 +271,7 @@ class GuzzleHandler implements iHandler
                     if(is_array($value) && $key = 'UniqueIdentifier'){
 
                         $user = User::fromArray(
-                            $this->getWhois( $value[0], $identifiers[$value[0]], $token)
+                            $this->getWhois( $value[0], $identifiers[$value[0]], (string) $token)
                         );
 
                         throw new UserAlreadyExistOnOauthServer(
@@ -302,21 +302,21 @@ class GuzzleHandler implements iHandler
      *
      * @param string $identifier_type
      * @param string $identifier_value
-     * @param iToken|null $token
+     * @param string $token
      *
      * @return array
 
      * @throws InvalidIdentifierType
      * @throws \Exception
      */
-    public function getWhois($identifier_type, $identifier_value, iToken $token)
+    public function getWhois($identifier_type, $identifier_value, $token)
     {
         Identifier::isValid($identifier_type);
 
         $uri = $this->endpoint(__FUNCTION__);
         $headers = [
             'Accept' => 'application/json',
-            'Authorization' => $token->__toString(),
+            'Authorization' => (string) $token,
         ];
 
         $query = Identifier::toArray($identifier_type, $identifier_value);
@@ -361,20 +361,20 @@ class GuzzleHandler implements iHandler
      * Get a list of users given their ids.
      *
      * @param array $userIds
-     * @param iToken $token     users.read scope is required
+     * @param string $token     users.read scope is required
      *
      * @throws TokenInvalidOrExpiredException
      * @throws OAuthServerUnhandledError
      *
      * @return array
      */
-    public function getUsers(array $userIds, iToken $token)
+    public function getUsers(array $userIds, $token)
     {
         $uri = $this->serverUrl.'/api/getUsers';
         $options = [
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorization' => $token->__toString(),
+                'Authorization' => (string) $token,
             ],
             'query' => [
                 'ids' => $userIds,

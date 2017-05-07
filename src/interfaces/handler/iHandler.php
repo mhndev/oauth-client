@@ -4,7 +4,6 @@ namespace mhndev\oauthClient\interfaces\handler;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
 use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
-use mhndev\oauthClient\interfaces\object\iToken;
 
 /**
  * Interface iHandler
@@ -19,10 +18,10 @@ interface iHandler
      * 1 - token scopes
      * 2 - user object (if token is related to an user and not a client)
      *
-     * @param iToken $token
+     * @param string $token
      * @return array
      */
-    public function getTokenInfo(iToken $token);
+    public function getTokenInfo($token);
 
 
     /**
@@ -39,11 +38,11 @@ interface iHandler
      * @param string $name
      * @param string $password
      * @param array $identifiers
-     * @param iToken $token
+     * @param string $token
      * @return array
      * @throws \Exception
      */
-    public function register($name, $password, array $identifiers, iToken $token);
+    public function register($name, $password, array $identifiers, $token);
 
 
     /**
@@ -54,25 +53,25 @@ interface iHandler
      *
      * @param string $identifier_type
      * @param string $identifier_value
-     * @param iToken|null $token
+     * @param string $token
      *
      * @return array
 
      * @throws InvalidIdentifierType
      * @throws \Exception
      */
-    public function getWhois($identifier_type, $identifier_value, iToken $token);
+    public function getWhois($identifier_type, $identifier_value, $token);
 
     /**
      * Get a list of users given their ids.
      *
      * @param array $userIds
-     * @param iToken $token     users.read scope is required
+     * @param string $token     users.read scope is required
      *
      * @throws TokenInvalidOrExpiredException
      * @throws OAuthServerUnhandledError
      *
      * @return array
      */
-    public function getUsers(array $userIds, iToken $token);
+    public function getUsers(array $userIds, $token);
 }
