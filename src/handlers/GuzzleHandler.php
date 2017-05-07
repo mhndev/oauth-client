@@ -370,7 +370,7 @@ class GuzzleHandler implements iHandler
      */
     public function getUsers(array $userIds, iToken $token)
     {
-        $uri = $this->endpoint(__FUNCTION__);
+        $uri = $this->serverUrl.'/api/getUsers';
         $options = [
             'headers' => [
                 'Accept' => 'application/json',
