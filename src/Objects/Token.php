@@ -1,14 +1,14 @@
 <?php
 namespace mhndev\oauthClient\Objects;
 
-use mhndev\digipeyk\services\oauth2\exceptions\InvalidArgumentException;
-use MongoDB\Database;
+use mhndev\oauthClient\exceptions\InvalidArgumentException;
+use mhndev\oauthClient\interfaces\object\iToken;
 
 /**
  * Class Token
  * @package mhndev\digipeyk\services\oauth2\Objects
  */
-class Token
+class Token implements iToken
 {
     /**
      * @var string

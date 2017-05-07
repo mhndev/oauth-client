@@ -1,13 +1,11 @@
 <?php
 namespace mhndev\oauthClient\interfaces;
 
-use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\InvalidTokenException;
-use mhndev\oauthClient\exceptions\OAuthServerBadResponseException;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
 use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
-use mhndev\oauthClient\interfaces\entity\iToken;
+use mhndev\oauthClient\interfaces\object\iToken;
 use mhndev\oauthClient\Objects\TokenInfo;
 use mhndev\oauthClient\Objects\User;
 use mhndev\valueObjects\implementations\Token;
@@ -27,11 +25,10 @@ interface iOAuthClient
      * 1 - token scopes
      * 2 - user object (if token is related to an user and not a client)
      *
-     * @param Token $token
+     * @param iToken $token
      * @return TokenInfo
-     * @throws InvalidTokenException
      */
-    public function getTokenInfo(Token $token);
+    public function getTokenInfo(iToken $token);
 
 
     /**

@@ -14,11 +14,10 @@ use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
 use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
 use mhndev\oauthClient\exceptions\UserAlreadyExistOnOauthServer;
 use mhndev\oauthClient\exceptions\ValidationException;
-use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\interfaces\handler\iHandler;
+use mhndev\oauthClient\interfaces\object\iToken;
 use mhndev\oauthClient\Objects\Identifier;
 use mhndev\oauthClient\Objects\User;
-use mhndev\valueObjects\implementations\Token;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -82,12 +81,13 @@ class GuzzleHandler implements iHandler
      * 1 - token scopes
      * 2 - user object (if token is related to an user and not a client)
      *
-     * @param Token $token
+     * @param iToken $token
      * @return ResponseInterface
      * @throws OAuthServerConnectionException
+     * @throws TokenInvalidOrExpiredException
      * @throws \Exception
      */
-    public function getTokenInfo(Token $token)
+    public function getTokenInfo(iToken $token)
     {
         try{
             $response = $this->httpClient->get($this->endpoint(__FUNCTION__), [
@@ -433,6 +433,10 @@ class GuzzleHandler implements iHandler
 
             case 'register':
                 return $this->serverUrl.'/api/registerUser';
+                break;
+
+            case 'getUsers':
+                return $this->serverUrl.'/api/getUsers';
                 break;
         }
 

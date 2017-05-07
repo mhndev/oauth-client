@@ -6,12 +6,11 @@ use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\InvalidTokenException;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
 use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
-use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\iOAuthClient;
+use mhndev\oauthClient\interfaces\object\iToken;
 use mhndev\oauthClient\Objects\TokenInfo;
 use mhndev\oauthClient\Objects\User;
-use mhndev\valueObjects\implementations\Token as TokenValueObject;
 
 /**
  * Class Client
@@ -42,11 +41,10 @@ class Client implements iOAuthClient
      * 1 - token scopes
      * 2 - user object (if token is related to an user and not a client)
      *
-     * @param TokenValueObject $token
      * @return TokenInfo
      * @throws InvalidTokenException
      */
-    public function getTokenInfo(TokenValueObject $token)
+    public function getTokenInfo(iToken $token)
     {
         $arrayTokenInfo = $this->handler->getTokenInfo($token);
 
