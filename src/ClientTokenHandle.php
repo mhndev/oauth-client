@@ -83,8 +83,15 @@ class ClientTokenHandle extends Client implements iOAuthClient
 
         $tokenEntityAsArray = array_merge(
             $token->toArray(),
-            ['client_id' => $client_id, 'client_secret' => $client_secret]
+            [
+                'client_id' => $client_id,
+                'client_secret' => $client_secret,
+                'credentials' => $token->getAccessToken()
+            ]
         );
+
+        unset($tokenEntityAsArray['access_token']);
+
 
         $this->tokenRepository->writeOrUpdate(Token::fromArray($tokenEntityAsArray));
 

@@ -69,14 +69,17 @@ class Token implements iToken
      * @param null | integer $expires_in
      */
     public function __construct(
-        $access_token,
+        $access_token = null,
         $type = self::SCHEMA_Basic,
         $refresh_token = null,
         $expires_in = null
     )
     {
-
+        $this->access_token = $access_token;
+        $this->type = $type;
+        $this->expires_in = $expires_in;
         $this->refresh_token = $refresh_token;
+        $this->expires_at = (new \DateTime())->setTimestamp($expires_in + time() );
     }
 
 

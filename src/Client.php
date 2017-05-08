@@ -41,8 +41,8 @@ class Client implements iOAuthClient
      * 1 - token scopes
      * 2 - user object (if token is related to an user and not a client)
      *
+     * @param string $token
      * @return TokenInfo
-     * @throws InvalidTokenException
      */
     public function getTokenInfo($token)
     {
@@ -83,9 +83,10 @@ class Client implements iOAuthClient
         );
 
         $arrayToken['type'] = $arrayToken['token_type'];
-        unset($arrayToken['token_type'], $arrayToken['access_token']);
+        unset($arrayToken['token_type']);
 
         $token = Token::fromOptions($arrayToken);
+
 
         return $token;
     }
