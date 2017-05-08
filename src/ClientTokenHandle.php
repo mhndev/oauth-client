@@ -1,10 +1,11 @@
 <?php
 namespace mhndev\oauthClient;
 
+use mhndev\oauthClient\entity\common\Token;
 use mhndev\oauthClient\exceptions\ModelNotFoundException;
-use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\iOAuthClient;
+use mhndev\oauthClient\interfaces\object\iToken;
 use mhndev\oauthClient\interfaces\repository\iTokenRepository;
 
 /**
@@ -80,7 +81,12 @@ class ClientTokenHandle extends Client implements iOAuthClient
     {
         $token = parent::getNewClientToken($client_id, $client_secret, $scopes);
 
-        $this->tokenRepository->writeOrUpdate($token);
+        $tokenEntityAsArray = array_merge(
+            $token->toArray(),
+            ['client_id' => $client_id, 'client_secret' => $client_secret]
+        );
+
+        $this->tokenRepository->writeOrUpdate(Token::fromArray($tokenEntityAsArray));
 
         return $token;
     }

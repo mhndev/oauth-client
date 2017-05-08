@@ -1,7 +1,6 @@
 <?php
 namespace mhndev\oauthClient;
 
-use mhndev\oauthClient\entity\common\Token as EntityToken;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\InvalidTokenException;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
@@ -9,6 +8,7 @@ use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\iOAuthClient;
 use mhndev\oauthClient\interfaces\object\iToken;
+use mhndev\oauthClient\Objects\Token;
 use mhndev\oauthClient\Objects\TokenInfo;
 use mhndev\oauthClient\Objects\User;
 
@@ -73,7 +73,7 @@ class Client implements iOAuthClient
      * @param $client_id
      * @param $client_secret
      * @param array $scopes
-     * @return \mhndev\oauthClient\interfaces\entity\iToken
+     * @return iToken
      */
     public function getNewClientToken($client_id, $client_secret, array $scopes  =[])
     {
@@ -82,13 +82,10 @@ class Client implements iOAuthClient
             $client_secret
         );
 
-        $arrayToken['client_id'] = $client_id;
-        $arrayToken['credentials'] = $arrayToken['access_token'];
         $arrayToken['type'] = $arrayToken['token_type'];
         unset($arrayToken['token_type'], $arrayToken['access_token']);
-        $arrayToken['client_secret'] = $client_secret;
 
-        $token = EntityToken::fromArray($arrayToken);
+        $token = Token::fromOptions($arrayToken);
 
         return $token;
     }
@@ -150,4 +147,5 @@ class Client implements iOAuthClient
             return User::fromArray($user);
         }, $users);
     }
+
 }

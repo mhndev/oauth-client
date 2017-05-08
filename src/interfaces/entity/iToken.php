@@ -5,7 +5,7 @@ namespace mhndev\oauthClient\interfaces\entity;
  * Interface iToken
  * @package mhndev\digipeyk\services\oauth2\interfaces\entity
  */
-interface iToken extends \mhndev\oauthClient\interfaces\object\iToken
+interface iToken
 {
 
     /**
@@ -16,7 +16,17 @@ interface iToken extends \mhndev\oauthClient\interfaces\object\iToken
     /**
      * @return string
      */
-    function getCredentials();
+    function getAccessToken();
+
+    /**
+     * @return \DateTime
+     */
+    function getExpiresAt();
+
+    /**
+     * @return integer
+     */
+    function getExpiresIn();
 
     /**
      * @return string
@@ -29,7 +39,8 @@ interface iToken extends \mhndev\oauthClient\interfaces\object\iToken
     function getClientSecret();
 
     /**
-     * @return \DateTime
+     * @return mixed
      */
-    function getExpiresAt();
+    function __toString();
+
 }

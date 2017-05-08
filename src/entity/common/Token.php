@@ -65,13 +65,16 @@ class Token implements iToken
 
         if(!empty($expires_in)){
             $this->expires_in = $expires_in;
-            $this->expires_at = (new \DateTime())->setTimestamp((int)$this->expires_in + time());
         }
 
         if(!empty($expires_at)){
             $this->expires_at = $expires_at;
-            $this->expires_in = $expires_at->getTimestamp() - time();
         }
+
+        if(!empty($expires_in) && empty($expires_at)){
+            $this->expires_at = (new \DateTime())->setTimestamp((int)$this->expires_in + time());
+        }
+
 
     }
 
@@ -148,5 +151,13 @@ class Token implements iToken
     public function __toString()
     {
         return $this->type.' '.$this->credentials;
+    }
+
+    /**
+     * @return string
+     */
+    function getAccessToken()
+    {
+        return $this->credentials;
     }
 }
