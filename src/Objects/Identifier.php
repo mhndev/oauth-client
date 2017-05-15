@@ -16,7 +16,11 @@ class Identifier extends BaseObject
 
     const MOBILE = 'mobile';
 
-    public static $valid_identifier_types = [ self::EMAIL, self::MOBILE ];
+    const ID = 'id';
+
+    const OAUTH_IDENTIFIER = 'oauthIdentifier';
+
+    public static $valid_identifier_types = [ self::EMAIL, self::MOBILE, self::ID, self::OAUTH_IDENTIFIER ];
 
     /**
      * @var string
@@ -62,17 +66,20 @@ class Identifier extends BaseObject
     public static function toArray($identifier_type, $identifier_value)
     {
         self::isValid($identifier_type);
+        $result = [];
 
-        if($identifier_type == Identifier::EMAIL){
+        if($identifier_type == self::EMAIL){
             $result = [ $identifier_type => $identifier_value ];
         }
-
         //  ($identifier_type == Identifier::MOBILE)
-        else {
+        elseif ($identifier_type == self::EMAIL) {
             // mobile string with zero
             $msz = (new MobilePhone($identifier_value))->format(MobilePhone::WithZero);
 
             $result = [$identifier_type => $msz];
+        }
+        elseif($identifier_type == self::ID){
+            $result = [$identifier_type => $identifier_value];
         }
 
         return $result;

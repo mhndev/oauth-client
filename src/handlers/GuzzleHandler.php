@@ -208,6 +208,7 @@ class GuzzleHandler implements iHandler
      */
     public function register($name, $password, array $identifiers, $token)
     {
+
         try{
             $response = $this->httpClient->post($this->endpoint(__FUNCTION__), [
                 'headers' => [ 'Accept' => 'application/json' ],
@@ -311,7 +312,6 @@ class GuzzleHandler implements iHandler
      */
     public function getWhois($identifier_type, $identifier_value, $token)
     {
-        Identifier::isValid($identifier_type);
 
         $uri = $this->endpoint(__FUNCTION__);
         $headers = [
@@ -320,7 +320,6 @@ class GuzzleHandler implements iHandler
         ];
 
         $query = Identifier::toArray($identifier_type, $identifier_value);
-
         $options = [ 'headers' => $headers, 'query' => $query];
 
         try{
@@ -432,7 +431,7 @@ class GuzzleHandler implements iHandler
                 break;
 
             case 'register':
-                return $this->serverUrl.'/api/registerUser';
+                return $this->serverUrl.'/api/registerOrGetUser';
                 break;
 
             case 'getUsers':
