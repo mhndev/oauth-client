@@ -419,7 +419,7 @@ class GuzzleHandler implements iHandler
         switch ($method){
 
             case 'getClientTokenFromOAuthServer':
-                return $this->serverUrl.'/auth/token';
+                return $this->serverUrl.'/api/auth/token';
                 break;
 
             case 'getTokenInfo':
