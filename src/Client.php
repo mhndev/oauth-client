@@ -2,7 +2,6 @@
 namespace mhndev\oauthClient;
 
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
-use mhndev\oauthClient\exceptions\InvalidTokenException;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
 use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
 use mhndev\oauthClient\interfaces\handler\iHandler;
@@ -118,7 +117,7 @@ class Client implements iOAuthClient
      * @param string $identifier_type
      * @param string $identifier_value
      * @param string $token
-     * @return TokenInfo
+     * @return User
      * @throws InvalidIdentifierType
      * @throws \Exception
      */
@@ -126,7 +125,7 @@ class Client implements iOAuthClient
     {
         $arrayWhois = $this->handler->getWhois($identifier_type, $identifier_value, $token);
 
-        return TokenInfo::fromArray($arrayWhois);
+        return User::fromArray($arrayWhois);
     }
 
     /**

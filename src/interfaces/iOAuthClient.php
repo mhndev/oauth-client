@@ -67,7 +67,7 @@ interface iOAuthClient
      * @param string $identifier_type
      * @param string $identifier_value
      * @param string $token
-     * @return TokenInfo
+     * @return User
      * @throws InvalidIdentifierType
      * @throws \Exception
      */
