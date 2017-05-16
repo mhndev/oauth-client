@@ -4,6 +4,7 @@ namespace mhndev\oauthClient\handlers;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ServerException;
 use mhndev\oauthClient\exceptions\ClientNotFoundException;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\IdentifierNotFoundOnOauthServer;
@@ -236,6 +237,13 @@ class GuzzleHandler implements iHandler
             else{
                 throw $e;
             }
+
+        }
+
+        catch (ServerException $e){
+            throw new OAuthServerUnhandledError(
+                json_decode($e->getResponse()->getBody()->getContents() )
+            );
 
         }
 
