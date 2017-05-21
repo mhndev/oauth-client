@@ -4,7 +4,6 @@ namespace mhndev\oauthClient\handlers;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\ServerException;
 use mhndev\oauthClient\exceptions\ClientNotFoundException;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\IdentifierNotFoundOnOauthServer;
@@ -90,6 +89,7 @@ class GuzzleHandler implements iHandler
      */
     public function getTokenInfo($token)
     {
+
         try{
             $response = $this->httpClient->get($this->endpoint(__FUNCTION__), [
                 'headers' => [
@@ -104,7 +104,7 @@ class GuzzleHandler implements iHandler
             if($e->getCode() == 401){
                 throw new TokenInvalidOrExpiredException(sprintf(
                     'your provided token is : %s which is expired or invalid.',
-                    $token->__toString()
+                    (string) $token
                 ));
             }
             else{
@@ -225,6 +225,7 @@ class GuzzleHandler implements iHandler
 
             // un processable entity (usually validation error)
             if($e->getCode() == 422) {
+
                 $this->ifUserAlreadyExistThrowException(
                     $e->getResponse(),
                     $identifiers,
@@ -237,13 +238,6 @@ class GuzzleHandler implements iHandler
             else{
                 throw $e;
             }
-
-        }
-
-        catch (ServerException $e){
-            throw new OAuthServerUnhandledError(
-                json_decode($e->getResponse()->getBody()->getContents() )
-            );
 
         }
 
@@ -322,16 +316,20 @@ class GuzzleHandler implements iHandler
     {
 
         $uri = $this->endpoint(__FUNCTION__);
+
         $headers = [
             'Accept' => 'application/json',
             'Authorization' => (string) $token,
         ];
 
         $query = Identifier::toArray($identifier_type, $identifier_value);
+
+
         $options = [ 'headers' => $headers, 'query' => $query];
 
         try{
             $response = $this->httpClient->get($uri, $options);
+
         }
 
         catch (ClientException $e){

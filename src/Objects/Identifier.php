@@ -44,6 +44,7 @@ class Identifier extends BaseObject
      */
     public static function isValid($identifier_type)
     {
+
         if(! in_array($identifier_type, Identifier::$valid_identifier_types)){
             throw new InvalidIdentifierType(
                 sprintf(
@@ -72,11 +73,17 @@ class Identifier extends BaseObject
             $result = [ $identifier_type => $identifier_value ];
         }
         //  ($identifier_type == Identifier::MOBILE)
-        elseif ($identifier_type == self::EMAIL) {
+        elseif ($identifier_type == self::MOBILE) {
             // mobile string with zero
-            $msz = (new MobilePhone($identifier_value))->format(MobilePhone::WithZero);
+            if ($identifier_value instanceof MobilePhone){
+                $msz = $identifier_value->format(MobilePhone::WithZero);
+            }
+            else{
+                $msz = (new MobilePhone($identifier_value))->format(MobilePhone::WithZero);
+            }
 
             $result = [$identifier_type => $msz];
+
         }
         elseif($identifier_type == self::ID){
             $result = [$identifier_type => $identifier_value];
