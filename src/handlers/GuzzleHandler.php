@@ -366,14 +366,14 @@ class GuzzleHandler implements iHandler
      * Get a list of users given their ids.
      *
      * @param array $userIds
-     * @param string $token     users.read scope is required
+     * @param string $token users.read scope is required
      *
-     * @throws TokenInvalidOrExpiredException
-     * @throws OAuthServerUnhandledError
-     *
+     * @param bool $returnIdentifiers
      * @return array
+     * @throws OAuthServerUnhandledError
+     * @throws TokenInvalidOrExpiredException
      */
-    public function getUsers(array $userIds, $token)
+    public function getUsers(array $userIds, $token, $returnIdentifiers = true)
     {
         $uri = $this->serverUrl.'/api/getUsers';
         $options = [
@@ -385,6 +385,9 @@ class GuzzleHandler implements iHandler
                 'ids' => $userIds,
             ],
         ];
+        if ($returnIdentifiers){
+            $options['query']['identifiers'] = 1;
+        }
 
         try {
             $response = $this->httpClient->get($uri, $options);
