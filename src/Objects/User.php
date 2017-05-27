@@ -2,7 +2,6 @@
 namespace mhndev\oauthClient\Objects;
 
 use mhndev\oauthClient\exceptions\InvalidArgumentException;
-
 /**
  * Class User
  * @package mhndev\oauthClient\Objects
@@ -34,6 +33,11 @@ class User extends BaseObject
      * @var \DateTime
      */
     protected $updated_at;
+
+    /**
+     * @var string
+     */
+    protected $session_challenge;
 
     /**
      * @var Identifiers
@@ -118,6 +122,23 @@ class User extends BaseObject
     public function getAvatarUrl()
     {
         return $this->avatar_url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSessionChallenge()
+    {
+        return $this->session_challenge;
+    }
+
+    /**
+     * @param $sessionChallenge
+     * @internal param string $session_challenge
+     */
+    public function setSessionChallenge($sessionChallenge)
+    {
+        $this->session_challenge = $sessionChallenge;
     }
 
 
