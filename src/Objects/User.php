@@ -2,6 +2,7 @@
 namespace mhndev\oauthClient\Objects;
 
 use mhndev\oauthClient\exceptions\InvalidArgumentException;
+
 /**
  * Class User
  * @package mhndev\oauthClient\Objects
