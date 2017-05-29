@@ -89,7 +89,6 @@ class GuzzleHandler implements iHandler
      */
     public function getTokenInfo($token)
     {
-
         try{
             $response = $this->httpClient->get($this->endpoint(__FUNCTION__), [
                 'headers' => [
@@ -167,7 +166,7 @@ class GuzzleHandler implements iHandler
         try{
             $response = $this->httpClient->post($uri, $options);
 
-        } catch ( ConnectException $e){
+        } catch ( ConnectException $e ){
 
             throw new ConnectOAuthServerException(
                 sprintf(
@@ -176,7 +175,7 @@ class GuzzleHandler implements iHandler
                 )
             );
 
-        } catch (ClientException $e){
+        } catch ( ClientException $e ){
 
             if($e->getCode() == 401){
                 throw new ClientNotFoundException(sprintf(
@@ -314,7 +313,6 @@ class GuzzleHandler implements iHandler
      */
     public function getWhois($identifier_type, $identifier_value, $token)
     {
-
         $uri = $this->endpoint(__FUNCTION__);
 
         $headers = [
@@ -366,7 +364,7 @@ class GuzzleHandler implements iHandler
      * Get a list of users given their ids.
      *
      * @param array $userIds
-     * @param string $token users.read scope is required
+     * @param mixed $token users.read scope is required
      *
      * @param bool $returnIdentifiers
      * @return array

@@ -1,12 +1,16 @@
 <?php
 namespace mhndev\oauthClient;
 
-use mhndev\oauthClient\entity\common\Token;
+use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\ModelNotFoundException;
+use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
+use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\iOAuthClient;
 use mhndev\oauthClient\interfaces\object\iToken;
 use mhndev\oauthClient\interfaces\repository\iTokenRepository;
+use mhndev\oauthClient\Objects\User;
+use mhndev\oauthClient\entity\common\Token as TokenEntity;
 
 /**
  * This Client class handles token
@@ -37,6 +41,20 @@ class ClientTokenHandle extends Client implements iOAuthClient
         parent::__construct($handler);
 
         $this->tokenRepository = $tokenRepository;
+    }
+
+
+    /**
+     * @param TokenEntity $token
+     * @return iToken
+     */
+    private function refreshToken(TokenEntity $token)
+    {
+        return $this->getNewClientToken(
+            $token->getClientId(),
+            $token->getClientSecret()
+        );
+
     }
 
 
@@ -93,9 +111,119 @@ class ClientTokenHandle extends Client implements iOAuthClient
         unset($tokenEntityAsArray['access_token']);
 
 
-        $this->tokenRepository->writeOrUpdate(Token::fromArray($tokenEntityAsArray));
+        $this->tokenRepository->writeOrUpdate(TokenEntity::fromArray($tokenEntityAsArray));
 
         return $token;
     }
+
+
+    /**
+     *
+     * This method register new user to oauth server
+     *
+     * @param string $name
+     * @param string $password
+     * @param array $identifiers
+     * @param string $token
+     * @return User
+     * @throws TokenInvalidOrExpiredException
+     * @internal param array $identifiers
+     */
+    public function register($name, $password, array $identifiers, $token)
+    {
+        try{
+            $arrayUser = $this->handler->register($name, $password, $identifiers, $token)['result'];
+        }
+
+        catch (TokenInvalidOrExpiredException $e){
+
+            if($token instanceof TokenEntity){
+
+                $refreshedAccessToken = $this->refreshToken($token);
+                $arrayUser = $this->handler->register(
+                    $name,
+                    $password,
+                    $identifiers,
+                    $refreshedAccessToken
+                )['result'];
+
+            }else{
+                throw $e;
+            }
+        }
+
+        return User::fromArray($arrayUser);
+    }
+
+
+    /**
+     *
+     * This method get an user identifier like email or mobile
+     * and check token data relates to who ?
+     * consider this method should be called with client token (credentials)
+     *
+     * @param string $identifier_type
+     * @param string $identifier_value
+     * @param string $token
+     * @return User
+     * @throws InvalidIdentifierType
+     * @throws \Exception
+     */
+    public function getWhois($identifier_type, $identifier_value, $token)
+    {
+        try{
+            $arrayWhois = $this->handler->getWhois($identifier_type, $identifier_value, $token);
+        }
+        catch (TokenInvalidOrExpiredException $e){
+
+            if($token instanceof TokenEntity){
+
+                $refreshedAccessToken = $this->refreshToken($token);
+
+                $arrayWhois = $this->handler->getWhois(
+                    $identifier_type,
+                    $identifier_value,
+                    $refreshedAccessToken
+                );
+
+            }else{
+                throw $e;
+            }
+        }
+
+        return User::fromArray($arrayWhois);
+    }
+
+    /**
+     * Get a list of users given their ids.
+     *
+     * @param array $userIds
+     * @param mixed $token     users.read scope is required
+     *
+     * @throws TokenInvalidOrExpiredException
+     * @throws OAuthServerUnhandledError
+     *
+     * @return array
+     */
+    public function getUsers(array $userIds, $token)
+    {
+        try{
+            $users = $this->handler->getUsers($userIds, $token);
+        }
+        catch (TokenInvalidOrExpiredException $e){
+
+            $refreshedAccessToken = $this->refreshToken($token);
+
+            $users = $this->handler->getUsers($userIds, $refreshedAccessToken);
+        }
+
+        $func = function ($user) {
+            return User::fromArray($user);
+        };
+
+        return array_map($func, $users);
+
+    }
+
 
 }

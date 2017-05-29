@@ -63,7 +63,7 @@ class Client implements iOAuthClient
      * @param array $scopes
      * @return iToken
      */
-    public function getClientToken($client_id, $client_secret, array $scopes  =[])
+    public function getClientToken($client_id, $client_secret, array $scopes =[])
     {
         return $this->getNewClientToken($client_id, $client_secret, $scopes);
     }
@@ -85,7 +85,6 @@ class Client implements iOAuthClient
         unset($arrayToken['token_type']);
 
         $token = Token::fromOptions($arrayToken);
-
 
         return $token;
     }

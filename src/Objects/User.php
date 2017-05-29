@@ -36,11 +36,6 @@ class User extends BaseObject
     protected $updated_at;
 
     /**
-     * @var string
-     */
-    protected $session_challenge;
-
-    /**
      * @var Identifiers
      */
     protected $identifiers;
@@ -123,23 +118,6 @@ class User extends BaseObject
     public function getAvatarUrl()
     {
         return $this->avatar_url;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSessionChallenge()
-    {
-        return $this->session_challenge;
-    }
-
-    /**
-     * @param $sessionChallenge
-     * @internal param string $session_challenge
-     */
-    public function setSessionChallenge($sessionChallenge)
-    {
-        $this->session_challenge = $sessionChallenge;
     }
 
 

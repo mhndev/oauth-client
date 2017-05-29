@@ -38,7 +38,7 @@ interface iHandler
      * @param string $name
      * @param string $password
      * @param array $identifiers
-     * @param string $token
+     * @param mixed (string or an object which implements __toString) $token
      * @return array
      * @throws \Exception
      */
@@ -53,7 +53,7 @@ interface iHandler
      *
      * @param string $identifier_type
      * @param string $identifier_value
-     * @param string $token
+     * @param mixed (string or an object which implements __toString) $token
      *
      * @return array
 
@@ -66,7 +66,7 @@ interface iHandler
      * Get a list of users given their ids.
      *
      * @param array $userIds
-     * @param string $token     users.read scope is required
+     * @param mixed $token  (string or an object which implements __toString)   users.read scope is required
      *
      * @throws TokenInvalidOrExpiredException
      * @throws OAuthServerUnhandledError
