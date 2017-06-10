@@ -7,8 +7,6 @@ use mhndev\oauthClient\exceptions\OAuthServerBadResponseException;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
 use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
 use mhndev\oauthClient\interfaces\handler\iHandler;
-use mhndev\oauthClient\interfaces\object\iToken;
-use mhndev\valueObjects\implementations\Token;
 
 /**
  * Class MockHandler
@@ -24,12 +22,12 @@ class MockHandler implements iHandler
      * 1 - token scopes
      * 2 - user object (if token is related to an user and not a client)
      *
-     * @param iToken $token
+     * @param mixed $token
      * @param array $options
      * @return array
      * @throws \Exception
      */
-    public function getTokenInfo(iToken $token, array $options = [])
+    public function getTokenInfo($token, array $options = [])
     {
         if(empty($options['token_owner'])){
             $options['token_owner'] = 'user';
@@ -94,11 +92,11 @@ class MockHandler implements iHandler
      * @param string $name
      * @param string $password
      * @param array $identifiers
-     * @param iToken $token
+     * @param mixed $token
      * @return array
      * @internal param array $identifiers
      */
-    public function register($name, $password, array $identifiers, iToken $token)
+    public function register($name, $password, array $identifiers, $token)
     {
         $result = [
             'status' => 'OK',
@@ -124,12 +122,12 @@ class MockHandler implements iHandler
      *
      * @param string $identifier_type
      * @param string $identifier_value
-     * @param iToken|null $token
+     * @param mixed $token
      * @return array
      * @throws InvalidIdentifierType
      * @throws \Exception
      */
-    public function getWhois($identifier_type, $identifier_value, iToken $token)
+    public function getWhois($identifier_type, $identifier_value, $token)
     {
         $result = [
               "id" => 2,
@@ -166,14 +164,14 @@ class MockHandler implements iHandler
      * Get a list of users given their ids.
      *
      * @param array $userIds
-     * @param iToken $token     users.read scope is required
+     * @param mixed $token     users.read scope is required
      *
      * @throws TokenInvalidOrExpiredException
      * @throws OAuthServerUnhandledError
      *
      * @return array
      */
-    public function getUsers(array $userIds, iToken $token)
+    public function getUsers(array $userIds, $token)
     {
         return [];
     }
@@ -197,6 +195,47 @@ class MockHandler implements iHandler
         ];
 
         return $result;
+    }
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return mixed
+     * @throws ConnectOAuthServerException
+     * @throws \Exception
+     */
+    public function addIdentifier($token, $identifier_value, $identifier_type)
+    {
+        die(__METHOD__.'not implemented');
+    }
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return mixed
+     * @throws TokenInvalidOrExpiredException
+     * @throws ConnectOAuthServerException
+     * @throws \Exception
+     */
+    public function removeIdentifier($token, $identifier_value, $identifier_type)
+    {
+        die(__METHOD__.'not implemented');
+    }
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return mixed
+     * @throws TokenInvalidOrExpiredException
+     * @throws ConnectOAuthServerException
+     * @throws \Exception
+     */
+    public function verifyIdentifier($token, $identifier_value, $identifier_type)
+    {
+        die(__METHOD__.'not implemented');
     }
 
 }
