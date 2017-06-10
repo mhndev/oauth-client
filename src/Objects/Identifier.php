@@ -22,6 +22,8 @@ class Identifier extends BaseObject
 
     public static $valid_identifier_types = [ self::EMAIL, self::MOBILE, self::ID, self::OAUTH_IDENTIFIER ];
 
+    public static $valid_oAuth_identifiers = [self::EMAIL, self::MOBILE ];
+
     /**
      * @var string
      */

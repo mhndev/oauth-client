@@ -7,6 +7,7 @@ use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\iOAuthClient;
 use mhndev\oauthClient\interfaces\object\iToken;
+use mhndev\oauthClient\Objects\Identifier;
 use mhndev\oauthClient\Objects\Token;
 use mhndev\oauthClient\Objects\TokenInfo;
 use mhndev\oauthClient\Objects\User;
@@ -146,5 +147,46 @@ class Client implements iOAuthClient
             return User::fromArray($user);
         }, $users);
     }
+
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return Identifier
+     */
+    public function addIdentifier($token, $identifier_value, $identifier_type)
+    {
+        $identifierArray = $this->handler->addIdentifier($token, $identifier_value, $identifier_type);
+
+       return Identifier::fromArray($identifierArray);
+
+    }
+
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return true
+     */
+    public function removeIdentifier($token, $identifier_value, $identifier_type)
+    {
+        return $this->handler->removeIdentifier($token, $identifier_value, $identifier_type);
+
+    }
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return true
+     */
+    public function verifyIdentifier($token, $identifier_value, $identifier_type)
+    {
+        return $this->handler->verifyIdentifier($token, $identifier_value, $identifier_type);
+
+    }
+
 
 }

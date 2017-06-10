@@ -22,6 +22,12 @@ class ValidationException extends \Exception
 
 
     /**
+     * @var int
+     */
+    protected $status_code = 422;
+
+
+    /**
      * Construct the exception. Note: The message is NOT binary safe.
      * @link http://php.net/manual/en/exception.construct.php
      * @param string $message [optional] The Exception message to throw.
@@ -41,6 +47,7 @@ class ValidationException extends \Exception
     {
         parent::__construct($message, $code, $previous);
 
+        $this->status_code = $code;
         $this->failed_rules = $failed_rules;
         $this->failed_messages = $failed_messages;
     }
@@ -61,6 +68,14 @@ class ValidationException extends \Exception
     public function getFailedMessages()
     {
         return $this->failed_messages;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode()
+    {
+        return $this->status_code;
     }
 
 }

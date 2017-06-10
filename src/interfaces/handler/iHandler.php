@@ -1,6 +1,8 @@
 <?php
 namespace mhndev\oauthClient\interfaces\handler;
 
+use mhndev\digipeyk\exceptions\AccessDeniedException;
+use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
 use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
@@ -74,4 +76,43 @@ interface iHandler
      * @return array
      */
     public function getUsers(array $userIds, $token);
+
+
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return mixed
+     * @throws AccessDeniedException
+     * @throws ConnectOAuthServerException
+     * @throws \Exception
+     */
+    public function addIdentifier($token, $identifier_value, $identifier_type);
+
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return mixed
+     * @throws TokenInvalidOrExpiredException
+     * @throws ConnectOAuthServerException
+     * @throws \Exception
+     */
+    public function removeIdentifier($token, $identifier_value, $identifier_type);
+
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return mixed
+     * @throws TokenInvalidOrExpiredException
+     * @throws ConnectOAuthServerException
+     * @throws \Exception
+     */
+    public function verifyIdentifier($token, $identifier_value, $identifier_type);
+
+
 }
