@@ -84,7 +84,6 @@ interface iHandler
      * @param $identifier_value
      * @param $identifier_type
      * @return mixed
-     * @throws AccessDeniedException
      * @throws ConnectOAuthServerException
      * @throws \Exception
      */

@@ -2,7 +2,6 @@
 namespace mhndev\oauthClient\Objects;
 
 use mhndev\oauthClient\exceptions\InvalidArgumentException;
-
 /**
  * Class User
  * @package mhndev\oauthClient\Objects
@@ -161,6 +160,24 @@ class User extends BaseObject
     public function setBlocked($blocked)
     {
         $this->blocked = $blocked;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'avatar_url' => $this->getAvatarUrl(),
+            'created_at' => $this->getCreatedAt(),
+            'updated_at' => $this->getUpdatedAt(),
+            'identifiers' => $this->getIdentifiers(),
+            'blocked' => $this->getBlocked()
+        ];
+
     }
 
 
