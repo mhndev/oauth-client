@@ -188,5 +188,31 @@ class Client implements iOAuthClient
 
     }
 
+    /**
+     * @param $token
+     * @param $identifier_key
+     * @param $identifier_value
+     * @return mixed
+     */
+    public function unverifyIdentifier($token, $identifier_key, $identifier_value)
+    {
+        return $this->handler->unverifyIdentifier($token, $identifier_key, $identifier_value);
+
+    }
+
+    /**
+     * @param $token
+     * @param $identifier_key
+     * @param $identifier_value
+     * @return mixed
+     */
+    public function searchForUser($token, $identifier_key, $identifier_value)
+    {
+        $users = $this->handler->searchForUser($token, $identifier_key, $identifier_value)['result'];
+
+        return array_map(function ($user) {
+            return User::fromArray($user);
+        }, $users);
+    }
 
 }
