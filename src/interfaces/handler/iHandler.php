@@ -115,4 +115,22 @@ interface iHandler
     public function verifyIdentifier($token, $identifier_value, $identifier_type);
 
 
+    /**
+     * @param $token
+     * @param $identifier_key
+     * @param $identifier_value
+     * @return mixed
+     */
+    public function unverifyIdentifier($token, $identifier_key, $identifier_value);
+
+
+    /**
+     * @param $token
+     * @param $identifier_key
+     * @param $identifier_value
+     * @return mixed
+     */
+    public function searchForUser($token, $identifier_key, $identifier_value);
+
+
 }
