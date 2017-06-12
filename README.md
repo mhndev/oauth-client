@@ -107,3 +107,7 @@ var_dump($result);
 
 ```
 
+
+
+todo :
+toArray for oauth objects
