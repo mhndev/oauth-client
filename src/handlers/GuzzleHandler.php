@@ -730,7 +730,8 @@ class GuzzleHandler implements iHandler
      * @param ResponseInterface $response
      * @return  ValidationException
      */
-    protected function getValidationException(ResponseInterface $response)
+
+    protected function throwValidationException(ResponseInterface $response)
 
     {
         $responseBody = $this->getResult($response);
