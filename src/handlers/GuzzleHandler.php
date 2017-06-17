@@ -1,4 +1,5 @@
 <?php
+
 namespace mhndev\oauthClient\handlers;
 
 use GuzzleHttp\Client;
@@ -319,11 +320,9 @@ class GuzzleHandler implements iHandler
         try {
             $response = $this->httpClient->get($uri, $options);
 
-        }
-        catch (ClientException $e) {
+        } catch (ClientException $e) {
 
             if ($e->getCode() == 404) {
-
                 throw new IdentifierNotFoundOnOauthServer(sprintf(
                     'identifier with %s = %s', $identifier_type, $identifier_value
                 ));
@@ -339,15 +338,12 @@ class GuzzleHandler implements iHandler
                 throw new OAuthServerUnhandledError(sprintf(
                     'oauth server unhandled exception'
                 ));
-            }
-
-            else{
+            } else {
                 throw $e;
             }
 
 
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
 
@@ -385,9 +381,7 @@ class GuzzleHandler implements iHandler
 
         try {
             $response = $this->httpClient->get($uri, $options);
-        }
-
-        catch (ClientException $e) {
+        } catch (ClientException $e) {
 
             if ($e->getCode() == 401) {
                 throw new TokenInvalidOrExpiredException(sprintf(
@@ -399,9 +393,7 @@ class GuzzleHandler implements iHandler
                 throw new OAuthServerUnhandledError(sprintf(
                     'oauth server unhandled exception'
                 ));
-            }
-
-            else{
+            } else {
                 throw $e;
             }
         }
@@ -435,13 +427,12 @@ class GuzzleHandler implements iHandler
 
         $options = [
             'headers' => $headers,
-            'json'    => $json
+            'json' => $json
         ];
 
         try {
             $response = $this->httpClient->post($uri, $options);
-        }
-        catch (ConnectException $e) {
+        } catch (ConnectException $e) {
             throw new ConnectOAuthServerException(
                 sprintf(
                     'could not establish connection to oauth server (%s)',
@@ -449,8 +440,7 @@ class GuzzleHandler implements iHandler
                 )
             );
 
-        }
-        catch (ClientException $e) {
+        } catch (ClientException $e) {
 
             if ($e->getCode() == 401) {
                 throw new TokenInvalidOrExpiredException();
@@ -459,20 +449,16 @@ class GuzzleHandler implements iHandler
             if ($e->getCode() == 422) {
 
                 throw $this->getValidationException($e->getResponse());
-            }
-
-            else{
+            } else {
                 throw $e;
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
 
         return $this->getResult($response);
 
     }
-
 
 
     /**
@@ -494,15 +480,14 @@ class GuzzleHandler implements iHandler
             'Accept-Language' => 'fa'
         ];
 
-        $json = [ $identifier_type => $identifier_value];
+        $json = [$identifier_type => $identifier_value];
 
         $options = ['headers' => $headers, 'json' => $json];
 
 
         try {
             $response = $this->httpClient->post($uri, $options);
-        }
-        catch (ConnectException $e) {
+        } catch (ConnectException $e) {
 
             throw new ConnectOAuthServerException(
                 sprintf(
@@ -511,8 +496,7 @@ class GuzzleHandler implements iHandler
                 )
             );
 
-        }
-        catch (ClientException $e) {
+        } catch (ClientException $e) {
 
             if ($e->getCode() == 401) {
                 throw new TokenInvalidOrExpiredException();
@@ -520,28 +504,23 @@ class GuzzleHandler implements iHandler
 
             if ($e->getCode() == 422) {
                 throw $this->getValidationException($e->getResponse());
-            }
-            else{
+            } else {
                 throw $e;
             }
 
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
 
 
         $result = $this->getResult($response)['result'];
 
-        if (!$result){
+        if (!$result) {
             throw new NonRemovableIdentifierException();
         }
 
         return $result;
     }
-
-
-
 
     /**
      * @param $token
@@ -563,18 +542,17 @@ class GuzzleHandler implements iHandler
 
         $json = [
             $identifier_type => $identifier_value,
-            'token'          => $token
+            'token' => $token
         ];
 
         $options = [
             'headers' => $headers,
-            'json'    => $json
+            'json' => $json
         ];
 
         try {
             $response = $this->httpClient->post($uri, $options);
-        }
-        catch (ConnectException $e) {
+        } catch (ConnectException $e) {
             throw new ConnectOAuthServerException(
                 sprintf(
                     'could not establish connection to oauth server (%s)',
@@ -582,8 +560,7 @@ class GuzzleHandler implements iHandler
                 )
             );
 
-        }
-        catch (ClientException $e) {
+        } catch (ClientException $e) {
 
             if ($e->getCode() == 401) {
                 throw new InvalidTokenException();
@@ -596,13 +573,11 @@ class GuzzleHandler implements iHandler
             if ($e->getCode() == 422) {
 
                 throw $this->getValidationException($e->getResponse());
-            }
-            else{
+            } else {
                 throw $e;
             }
 
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
 
@@ -612,6 +587,70 @@ class GuzzleHandler implements iHandler
         return $result;
 
     }
+
+
+    /**
+     * @param $token
+     * @param  int $user_id
+     * @return mixed
+     * @throws ConnectOAuthServerException
+     * @throws InvalidIdentifierException
+     * @throws InvalidTokenException
+     * @throws ValidationException
+     * @throws \Exception
+     */
+    public function unverifyIdentifier($token, $user_id)
+    {
+        $uri = $this->endpoint(__FUNCTION__);
+
+        $headers = [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'fa',
+            'Authorization' => (string) $token
+        ];
+
+        $json = [
+            'user_id' => $user_id
+        ];
+
+        $options = [
+            'headers' => $headers,
+            'json' => $json
+        ];
+
+        try {
+            $response = $this->httpClient->post($uri, $options);
+        } catch (ConnectException $e) {
+            throw new ConnectOAuthServerException(
+                sprintf(
+                    'could not establish connection to oauth server (%s)',
+                    $this->serverUrl
+                )
+            );
+
+        } catch (ClientException $e) {
+
+            if ($e->getCode() == 401) {
+                throw new InvalidTokenException();
+            }
+            if ($e->getCode() == 422) {
+
+                throw $this->getValidationException($e->getResponse());
+            } else {
+                throw $e;
+            }
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+
+        $result = $this->getResult($response)['result'];
+
+        return $result;
+
+    }
+
 
     /**
      * @param $token
@@ -629,13 +668,13 @@ class GuzzleHandler implements iHandler
         $headers = [
             'Accept' => 'application/json',
             'Accept-Language' => 'fa',
-            'Authorization'  => (string)$token
+            'Authorization' => (string)$token
         ];
         $query = [$identifier_key => $identifier_value];
 
         $options = [
             'headers' => $headers,
-            'query'    => $query
+            'query' => $query
         ];
 
         try {
@@ -656,7 +695,7 @@ class GuzzleHandler implements iHandler
             }
             if ($e->getCode() == 422) {
 
-                $this->throwValidationException($e->getResponse());
+                $this->getValidationException($e->getResponse());
             }
         } catch (\Exception $e) {
             throw $e;
@@ -714,12 +753,16 @@ class GuzzleHandler implements iHandler
                 return $this->serverUrl . '/api/removeUserIdentifier';
                 break;
 
-            case 'verifyIdentifier':
+            case 'verifyIdentifier' :
                 return $this->serverUrl . '/api/verifyIdentifier';
+                break;
+            case 'unverifyIdentifier' :
+                return $this->serverUrl . '/api/unverifyUserIdentifiers';
                 break;
             case 'searchForUser':
                 return $this->serverUrl . '/api/searchForUser';
                 break;
+
         }
 
 
@@ -730,9 +773,7 @@ class GuzzleHandler implements iHandler
      * @param ResponseInterface $response
      * @return  ValidationException
      */
-
-    protected function throwValidationException(ResponseInterface $response)
-
+    protected function getValidationException(ResponseInterface $response)
     {
         $responseBody = $this->getResult($response);
 
@@ -745,14 +786,4 @@ class GuzzleHandler implements iHandler
 
     }
 
-    /**
-     * @param $token
-     * @param $identifier_key
-     * @param $identifier_value
-     * @return mixed
-     */
-    public function unverifyIdentifier($token, $identifier_key, $identifier_value)
-    {
-        // TODO: Implement unverifyIdentifier() method.
-    }
 }
