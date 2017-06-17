@@ -85,4 +85,6 @@ interface iOAuthClient
      * @return array
      */
     public function getUsers(array $userIds, $token);
+
+
 }

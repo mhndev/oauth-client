@@ -185,19 +185,17 @@ class Client implements iOAuthClient
     public function verifyIdentifier($token, $identifier_value, $identifier_type)
     {
         return $this->handler->verifyIdentifier($token, $identifier_value, $identifier_type);
-
     }
+
 
     /**
      * @param $token
-     * @param $identifier_key
-     * @param $identifier_value
-     * @return mixed
+     * @param $user_id
+     * @return true
      */
-    public function unverifyIdentifier($token, $identifier_key, $identifier_value)
+    public function unverifyIdentifier($token, $user_id)
     {
-        return $this->handler->unverifyIdentifier($token, $identifier_key, $identifier_value);
-
+        return $this->handler->unverifyIdentifier($token, $user_id);
     }
 
     /**
