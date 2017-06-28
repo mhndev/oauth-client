@@ -106,12 +106,11 @@ interface iHandler
      * @param $token
      * @param $identifier_value
      * @param $identifier_type
+     * @param $sessionChallenge
+     * @param $clientId
      * @return mixed
-     * @throws TokenInvalidOrExpiredException
-     * @throws ConnectOAuthServerException
-     * @throws \Exception
      */
-    public function verifyIdentifier($token, $identifier_value, $identifier_type);
+    public function verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge, $clientId);
 
     /**
      * @param $token

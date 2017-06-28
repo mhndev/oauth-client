@@ -526,12 +526,16 @@ class GuzzleHandler implements iHandler
      * @param $token
      * @param $identifier_value
      * @param $identifier_type
+     * @param $sessionChallenge
+     * @param $clientId
      * @return mixed
-     * @throws TokenInvalidOrExpiredException
      * @throws ConnectOAuthServerException
+     * @throws InvalidIdentifierException
+     * @throws InvalidTokenException
+     * @throws ValidationException
      * @throws \Exception
      */
-    public function verifyIdentifier($token, $identifier_value, $identifier_type)
+    public function verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge = null, $clientId)
     {
         $uri = $this->endpoint(__FUNCTION__);
 
@@ -542,13 +546,16 @@ class GuzzleHandler implements iHandler
 
         $json = [
             $identifier_type => $identifier_value,
-            'token' => $token
+            'token' => $token,
+            'session_challenge' => $sessionChallenge,
+            'client_id' => $clientId
         ];
 
         $options = [
             'headers' => $headers,
             'json' => $json
         ];
+
 
         try {
             $response = $this->httpClient->post($uri, $options);
@@ -781,7 +788,7 @@ class GuzzleHandler implements iHandler
             $responseBody['error']['message'],
             422,
             $responseBody['error']['info']['messages'],
-            $responseBody['error']['info']['failed']
+            $responseBody['error']['info']['messages']
         );
 
     }

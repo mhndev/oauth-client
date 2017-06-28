@@ -180,12 +180,13 @@ class Client implements iOAuthClient
      * @param $token
      * @param $identifier_value
      * @param $identifier_type
+     * @param $sessionChallenge
+     * @param $client_id
      * @return true
      */
-    public function verifyIdentifier($token, $identifier_value, $identifier_type)
+    public function verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge, $client_id)
     {
-        return $this->handler->verifyIdentifier($token, $identifier_value, $identifier_type);
-    }
+        return $this->handler->verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge, $client_id);    }
 
 
     /**
