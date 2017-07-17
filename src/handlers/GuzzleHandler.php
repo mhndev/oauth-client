@@ -93,6 +93,7 @@ class GuzzleHandler implements iHandler
      */
     public function getTokenInfo($token)
     {
+
         try {
             $response = $this->httpClient->get($this->endpoint(__FUNCTION__), [
                 'headers' => [
@@ -100,7 +101,6 @@ class GuzzleHandler implements iHandler
                     'Authorization' => (string)$token,
                 ],
             ]);
-
         } catch (ClientException $e) {
 
             // provided token is not valid or has expired
@@ -526,12 +526,16 @@ class GuzzleHandler implements iHandler
      * @param $token
      * @param $identifier_value
      * @param $identifier_type
+     * @param $sessionChallenge
+     * @param $clientId
      * @return mixed
-     * @throws TokenInvalidOrExpiredException
      * @throws ConnectOAuthServerException
+     * @throws InvalidIdentifierException
+     * @throws InvalidTokenException
+     * @throws ValidationException
      * @throws \Exception
      */
-    public function verifyIdentifier($token, $identifier_value, $identifier_type)
+    public function verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge = null, $clientId)
     {
         $uri = $this->endpoint(__FUNCTION__);
 
@@ -542,13 +546,16 @@ class GuzzleHandler implements iHandler
 
         $json = [
             $identifier_type => $identifier_value,
-            'token' => $token
+            'token' => $token,
+            'session_challenge' => $sessionChallenge,
+            'client_id' => $clientId
         ];
 
         $options = [
             'headers' => $headers,
             'json' => $json
         ];
+
 
         try {
             $response = $this->httpClient->post($uri, $options);
@@ -651,6 +658,69 @@ class GuzzleHandler implements iHandler
 
     }
 
+
+    /**
+     * @param string $token
+     * @param string $identifierKey
+     * @param string $identifierValue
+     * @param integer $userId
+     * @return mixed
+     * @throws ConnectOAuthServerException
+     * @throws InvalidTokenException
+     * @throws ValidationException
+     * @throws \Exception
+     */
+    public function verifyIdentifierByAdmin($token, $identifierKey, $identifierValue, $userId)
+    {
+        $uri = $this->endpoint(__FUNCTION__);
+
+        $headers = [
+            'Accept' => 'application/json',
+            'Accept-Language' => 'fa',
+            'Authorization' => (string) $token
+        ];
+
+        $json = [
+            'user_id' => $userId,
+            $identifierKey => $identifierValue
+        ];
+
+        $options = [
+            'headers' => $headers,
+            'json' => $json
+        ];
+
+        try {
+            $response = $this->httpClient->post($uri, $options);
+        } catch (ConnectException $e) {
+            throw new ConnectOAuthServerException(
+                sprintf(
+                    'could not establish connection to oauth server (%s)',
+                    $this->serverUrl
+                )
+            );
+
+        } catch (ClientException $e) {
+
+            if ($e->getCode() == 401) {
+                throw new InvalidTokenException();
+            }
+            if ($e->getCode() == 422) {
+
+                throw $this->getValidationException($e->getResponse());
+            } else {
+                throw $e;
+            }
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+
+        $result = $this->getResult($response)['result'];
+
+        return $result;
+    }
 
     /**
      * @param $token
@@ -762,6 +832,10 @@ class GuzzleHandler implements iHandler
             case 'searchForUser':
                 return $this->serverUrl . '/api/searchForUser';
                 break;
+                break;
+            case 'verifyIdentifierByAdmin':
+                return $this->serverUrl . '/api/verifyUserIdentifier';
+                break;
 
         }
 
@@ -781,9 +855,10 @@ class GuzzleHandler implements iHandler
             $responseBody['error']['message'],
             422,
             $responseBody['error']['info']['messages'],
-            $responseBody['error']['info']['failed']
+            $responseBody['error']['info']['messages']
         );
 
     }
+
 
 }

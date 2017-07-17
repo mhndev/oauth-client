@@ -123,7 +123,7 @@ class Client implements iOAuthClient
      */
     public function getWhois($identifier_type, $identifier_value, $token)
     {
-        $arrayWhois = $this->handler->getWhois($identifier_type, $identifier_value, $token);
+        $arrayWhois = $this->handler->getWhois('id', $identifier_value, $token);
 
         return User::fromArray($arrayWhois);
     }
@@ -180,12 +180,13 @@ class Client implements iOAuthClient
      * @param $token
      * @param $identifier_value
      * @param $identifier_type
+     * @param $sessionChallenge
+     * @param $client_id
      * @return true
      */
-    public function verifyIdentifier($token, $identifier_value, $identifier_type)
+    public function verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge, $client_id)
     {
-        return $this->handler->verifyIdentifier($token, $identifier_value, $identifier_type);
-    }
+        return $this->handler->verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge, $client_id);    }
 
 
     /**
@@ -211,6 +212,18 @@ class Client implements iOAuthClient
         return array_map(function ($user) {
             return User::fromArray($user);
         }, $users);
+    }
+
+    /**
+     * @param string $token
+     * @param string $identifierKey
+     * @param string $identifierValue
+     * @param integer $userId
+     * @return mixed
+     */
+    public function verifyIdentifierByAdmin($token, $identifierKey, $identifierValue, $userId)
+    {
+        return $this->handler->verifyIdentifierByAdmin($token, $identifierKey, $identifierValue, $userId);
     }
 
 }
