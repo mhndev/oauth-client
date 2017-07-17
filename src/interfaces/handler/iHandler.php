@@ -129,4 +129,14 @@ interface iHandler
     public function searchForUser($token, $identifier_key, $identifier_value);
 
 
+    /**
+     * @param string $token
+     * @param string $identifierKey
+     * @param string $identifierValue
+     * @param integer $userId
+     * @return mixed
+     */
+    public function verifyIdentifierByAdmin($token, $identifierKey, $identifierValue, $userId);
+
+
 }
