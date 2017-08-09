@@ -260,4 +260,24 @@ class Identifiers extends Collection
         return null;
     }
 
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        $result = [];
+        if (!empty($this->items)){
+            /** @var Identifier $item */
+            foreach($this->items as $item){
+                $result[] = [
+                    'type' => $item->getType(),
+                    'value' => $item->getValue(),
+                    'verified' => $item->getVerified()
+                ];
+            }
+        }
+
+        return $result;
+    }
+
 }
