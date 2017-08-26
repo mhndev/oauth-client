@@ -4,6 +4,7 @@ namespace mhndev\oauthClient\interfaces;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
 use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
+use mhndev\oauthClient\interfaces\entity\iToken;
 use mhndev\oauthClient\Objects\TokenInfo;
 use mhndev\oauthClient\Objects\User;
 
@@ -42,6 +43,21 @@ interface iOAuthClient
      * @return \mhndev\oauthClient\interfaces\entity\iToken
      */
     public function getClientToken($client_id, $client_secret, array $scopes = []);
+
+
+    /**
+     * @param string $username
+     * @param string|null $client_id
+     * @param string|null $password
+     * @param string $grant_type
+     * @return iToken
+     */
+    public function getUserToken(
+        string $username,
+        string $client_id = null,
+        string $password = null,
+        string $grant_type = 'password'
+    );
 
 
     /**

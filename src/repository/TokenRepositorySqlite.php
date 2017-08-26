@@ -126,6 +126,7 @@ class TokenRepositorySqlite extends aSqliteRepository implements iTokenRepositor
 
     /**
      * @param iToken $token
+     * @throws DataSourceConnectionException
      */
     function writeOrUpdateIfExpired(iToken $token)
     {

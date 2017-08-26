@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ConnectException;
 use mhndev\oauthClient\exceptions\ClientNotFoundException;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\IdentifierNotFoundOnOauthServer;
+use mhndev\oauthClient\exceptions\InvalidArgumentException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\InvalidTokenException;
@@ -153,6 +154,79 @@ class GuzzleHandler implements iHandler
             'grant_type' => 'client_credentials',
             'client_id' => $client_id,
             'client_secret' => $client_secret
+        ];
+
+        if (!empty($scopes)) {
+            $json['scope'] = implode(' ', $scopes);
+        }
+
+        $options = [
+            'headers' => [
+                'Accept' => 'application/json'
+            ],
+            'json' => $json
+        ];
+
+        try {
+            $response = $this->httpClient->post($uri, $options);
+
+        } catch (ConnectException $e) {
+
+            throw new ConnectOAuthServerException(
+                sprintf(
+                    'could not establish connection to oauth server (%s)',
+                    $this->serverUrl
+                )
+            );
+
+        } catch (ClientException $e) {
+
+            if ($e->getCode() == 401) {
+                throw new ClientNotFoundException(sprintf(
+                    'client with id %s is not valid by oauth server',
+                    $client_id
+                ));
+            }
+
+            throw new OAuthServerBadResponseException($e->getMessage());
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+
+        return $this->getResult($response);
+    }
+
+
+    /**
+     * @param string $username
+     * @param string $password
+     * @param string $client_id
+     * @param string $grantType
+     * @return \mhndev\oauthClient\interfaces\entity\iToken
+     * @throws ClientNotFoundException
+     * @throws ConnectOAuthServerException
+     * @throws OAuthServerBadResponseException
+     * @throws \Exception
+     */
+    public function getUserTokenFromOAuthServer(
+        string $username,
+        string $password,
+        string $client_id,
+        string $grantType = 'password'
+    )
+    {
+        if(empty($username) || empty($password) || empty($client_id)){
+            throw new InvalidArgumentException('Invalid Arguments');
+        }
+
+        $uri = $this->endpoint(__FUNCTION__);
+
+        $json = [
+            'grant_type' => $grantType,
+            'client_id' => $client_id,
+            'username' => $username,
+            'password' => $password
         ];
 
         if (!empty($scopes)) {
@@ -799,6 +873,10 @@ class GuzzleHandler implements iHandler
                 return $this->serverUrl . '/api/auth/token';
                 break;
 
+            case 'getUserTokenFromOAuthServer':
+                return $this->serverUrl . '/api/auth/token';
+                break;
+
             case 'getTokenInfo':
                 return $this->serverUrl . '/api/getTokenInfo';
                 break;
@@ -859,6 +937,5 @@ class GuzzleHandler implements iHandler
         );
 
     }
-
 
 }

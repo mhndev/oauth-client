@@ -1,7 +1,6 @@
 <?php
 namespace mhndev\oauthClient\interfaces\handler;
 
-use mhndev\digipeyk\exceptions\AccessDeniedException;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
@@ -30,9 +29,25 @@ interface iHandler
      * @param $client_id
      * @param $client_secret
      * @param array $scopes
-     * @return mixed
+     * @return array
      */
     public function getClientTokenFromOAuthServer($client_id, $client_secret, array $scopes = []);
+
+
+    /**
+     * @param string $username
+     * @param string $password
+     * @param string $clientId
+     * @param string $grantType
+     * @return array
+     */
+    public function getUserTokenFromOAuthServer(
+        string $username,
+        string $password,
+        string $clientId,
+        string $grantType = 'password'
+    );
+
 
     /**
      * This method register new user to oauth server

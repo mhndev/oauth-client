@@ -90,6 +90,37 @@ class Client implements iOAuthClient
         return $token;
     }
 
+
+    /**
+     * @param $username
+     * @param $password
+     * @param $client_id
+     * @param string $grant_type
+     * @return iToken
+     */
+    public function getNewUserToken(
+        string $username,
+        string $password,
+        string $client_id,
+        string $grant_type = 'password'
+    )
+    {
+        $arrayToken = $this->handler->getUserTokenFromOAuthServer(
+            $username,
+            $password,
+            $client_id,
+            $grant_type
+        );
+
+        $arrayToken['type'] = $arrayToken['token_type'];
+        unset($arrayToken['token_type']);
+
+        $token = Token::fromOptions($arrayToken);
+
+        return $token;
+    }
+
+
     /**
      *
      * This method register new user to oauth server

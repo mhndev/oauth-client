@@ -9,6 +9,7 @@ use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\iOAuthClient;
 use mhndev\oauthClient\interfaces\object\iToken;
 use mhndev\oauthClient\interfaces\repository\iTokenRepository;
+use mhndev\oauthClient\interfaces\repository\iUserTokenRepository;
 use mhndev\oauthClient\Objects\User;
 use mhndev\oauthClient\entity\common\Token as TokenEntity;
 
@@ -31,16 +32,28 @@ class ClientTokenHandle extends Client implements iOAuthClient
 
 
     /**
+     * @var iUserTokenRepository
+     */
+    protected $userTokenRepository;
+
+
+    /**
      * ClientTokenHandle constructor.
      *
      * @param iHandler $handler
      * @param iTokenRepository $tokenRepository
+     * @param iUserTokenRepository $userTokenRepository
      */
-    public function __construct(iHandler $handler, iTokenRepository $tokenRepository)
+    public function __construct(
+        iHandler $handler,
+        iTokenRepository $tokenRepository,
+        iUserTokenRepository $userTokenRepository
+    )
     {
         parent::__construct($handler);
 
         $this->tokenRepository = $tokenRepository;
+        $this->userTokenRepository = $userTokenRepository;
     }
 
 
@@ -73,19 +86,55 @@ class ClientTokenHandle extends Client implements iOAuthClient
      */
     public function getClientToken($client_id, $client_secret, array $scopes = [])
     {
-        try{
+        try {
             $token = $this->tokenRepository->findByClientId($client_id);
 
-            if($token->getExpiresAt() <= new \DateTime() ){
+            if ($token->getExpiresAt() <= new \DateTime()) {
                 $token = $this->getNewClientToken($client_id, $client_secret);
             }
-        }
-        catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             $token = $this->getNewClientToken($client_id, $client_secret);
         }
 
         return $token;
     }
+
+
+    /**
+     * This method checks if there is any token for specified username in table
+     * or not, if there is any it also checks token expired_at field
+     * if token has expired it would issue new token to oauth server
+     * then it should persist new token to database and also return the token
+     *
+     *
+     * @param string $username
+     * @param string $password
+     * @param $client_id
+     * @param string $grant_type
+     *
+     * @return iToken
+     */
+    public function getUserToken(
+        string $username,
+        string $client_id = null,
+        string $password = null,
+        string $grant_type = 'password'
+    )
+    {
+        try {
+            $userToken = $this->userTokenRepository->findByUsername($username);
+
+            if ($userToken->getExpiresAt() <= new \DateTime()) {
+                $userToken = $this->getNewUserToken($username, $client_id, $password, $grant_type);
+            }
+        } catch (ModelNotFoundException $e) {
+            $userToken = $this->getNewUserToken($username, $client_id, $password, $grant_type);
+        }
+
+        return $userToken;
+    }
+
+
 
     /**
      * get new token for a client with specified client_id & client_secret from oauth server
@@ -131,13 +180,11 @@ class ClientTokenHandle extends Client implements iOAuthClient
      */
     public function register($name, $password, array $identifiers, $token)
     {
-        try{
+        try {
             $arrayUser = $this->handler->register($name, $password, $identifiers, $token)['result'];
-        }
+        } catch (TokenInvalidOrExpiredException $e) {
 
-        catch (TokenInvalidOrExpiredException $e){
-
-            if($token instanceof TokenEntity){
+            if ($token instanceof TokenEntity) {
 
                 $refreshedAccessToken = $this->refreshToken($token);
                 $arrayUser = $this->handler->register(
@@ -147,7 +194,7 @@ class ClientTokenHandle extends Client implements iOAuthClient
                     $refreshedAccessToken
                 )['result'];
 
-            }else{
+            } else {
                 throw $e;
             }
         }
@@ -171,12 +218,11 @@ class ClientTokenHandle extends Client implements iOAuthClient
      */
     public function getWhois($identifier_type, $identifier_value, $token)
     {
-        try{
+        try {
             $arrayWhois = $this->handler->getWhois($identifier_type, $identifier_value, $token);
-        }
-        catch (TokenInvalidOrExpiredException $e){
+        } catch (TokenInvalidOrExpiredException $e) {
 
-            if($token instanceof TokenEntity){
+            if ($token instanceof TokenEntity) {
 
                 $refreshedAccessToken = $this->refreshToken($token);
 
@@ -186,7 +232,7 @@ class ClientTokenHandle extends Client implements iOAuthClient
                     $refreshedAccessToken
                 );
 
-            }else{
+            } else {
                 throw $e;
             }
         }
@@ -198,7 +244,7 @@ class ClientTokenHandle extends Client implements iOAuthClient
      * Get a list of users given their ids.
      *
      * @param array $userIds
-     * @param mixed $token     users.read scope is required
+     * @param mixed $token users.read scope is required
      *
      * @throws TokenInvalidOrExpiredException
      * @throws OAuthServerUnhandledError
@@ -207,10 +253,9 @@ class ClientTokenHandle extends Client implements iOAuthClient
      */
     public function getUsers(array $userIds, $token)
     {
-        try{
+        try {
             $users = $this->handler->getUsers($userIds, $token);
-        }
-        catch (TokenInvalidOrExpiredException $e){
+        } catch (TokenInvalidOrExpiredException $e) {
 
             $refreshedAccessToken = $this->refreshToken($token);
 
@@ -224,6 +269,7 @@ class ClientTokenHandle extends Client implements iOAuthClient
         return array_map($func, $users);
 
     }
+
 
 
 }
