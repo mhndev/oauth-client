@@ -7,10 +7,12 @@ use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\iOAuthClient;
 use mhndev\oauthClient\interfaces\object\iToken;
+use mhndev\oauthClient\interfaces\object\iUserToken;
 use mhndev\oauthClient\Objects\Identifier;
 use mhndev\oauthClient\Objects\Token;
 use mhndev\oauthClient\Objects\TokenInfo;
 use mhndev\oauthClient\Objects\User;
+use mhndev\oauthClient\objects\UserToken;
 
 /**
  * Class Client
@@ -96,7 +98,7 @@ class Client implements iOAuthClient
      * @param $password
      * @param $client_id
      * @param string $grant_type
-     * @return iToken
+     * @return iUserToken
      */
     public function getNewUserToken(
         string $username,
@@ -112,10 +114,8 @@ class Client implements iOAuthClient
             $grant_type
         );
 
-        $arrayToken['type'] = $arrayToken['token_type'];
-        unset($arrayToken['token_type']);
 
-        $token = Token::fromOptions($arrayToken);
+        $token = UserToken::fromOptions($arrayToken);
 
         return $token;
     }
@@ -257,4 +257,22 @@ class Client implements iOAuthClient
         return $this->handler->verifyIdentifierByAdmin($token, $identifierKey, $identifierValue, $userId);
     }
 
+    /**
+     * @param int $userId
+     * @param string $username
+     * @param string|null $client_id
+     * @param string|null $password
+     * @param string $grant_type
+     * @return interfaces\entity\iToken
+     */
+    public function getUserToken(
+        int $userId,
+        string $username = null,
+        string $client_id = null,
+        string $password = null,
+        string $grant_type = 'password'
+    )
+    {
+        // TODO: Implement getUserToken() method.
+    }
 }

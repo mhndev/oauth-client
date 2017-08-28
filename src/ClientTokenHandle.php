@@ -8,6 +8,7 @@ use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\iOAuthClient;
 use mhndev\oauthClient\interfaces\object\iToken;
+use mhndev\oauthClient\interfaces\object\iUserToken;
 use mhndev\oauthClient\interfaces\repository\iTokenRepository;
 use mhndev\oauthClient\interfaces\repository\iUserTokenRepository;
 use mhndev\oauthClient\Objects\User;
@@ -107,28 +108,31 @@ class ClientTokenHandle extends Client implements iOAuthClient
      * then it should persist new token to database and also return the token
      *
      *
+     * @param int $userId
      * @param string $username
+     * @param string $client_id
      * @param string $password
-     * @param $client_id
      * @param string $grant_type
-     *
-     * @return iToken
+     * @return iUserToken
      */
     public function getUserToken(
-        string $username,
+        int $userId,
+        string $username = null,
         string $client_id = null,
         string $password = null,
         string $grant_type = 'password'
     )
     {
         try {
-            $userToken = $this->userTokenRepository->findByUsername($username);
+            $userToken = $this->userTokenRepository->findByUserId($userId);
 
-            if ($userToken->getExpiresAt() <= new \DateTime()) {
-                $userToken = $this->getNewUserToken($username, $client_id, $password, $grant_type);
+            if ($userToken->getExpiresAt() <= time()) {
+                $userToken = $this->getNewUserToken($userId, $client_id, $password, $grant_type);
+                $this->userTokenRepository->writeOrUpdate($userToken->getId(),$userToken);
             }
         } catch (ModelNotFoundException $e) {
-            $userToken = $this->getNewUserToken($username, $client_id, $password, $grant_type);
+            $userToken = $this->getNewUserToken($userId, $client_id, $password, $grant_type);
+            $this->userTokenRepository->writeOrUpdate($userToken->getId(),$userToken);
         }
 
         return $userToken;

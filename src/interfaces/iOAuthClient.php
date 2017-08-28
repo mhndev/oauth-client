@@ -46,6 +46,7 @@ interface iOAuthClient
 
 
     /**
+     * @param int $userId
      * @param string $username
      * @param string|null $client_id
      * @param string|null $password
@@ -53,6 +54,7 @@ interface iOAuthClient
      * @return iToken
      */
     public function getUserToken(
+        int    $userId,
         string $username,
         string $client_id = null,
         string $password = null,

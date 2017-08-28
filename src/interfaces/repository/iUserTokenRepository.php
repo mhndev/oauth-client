@@ -1,7 +1,7 @@
 <?php
 namespace mhndev\oauthClient\interfaces\repository;
 
-use mhndev\oauthClient\interfaces\entity\iToken;
+use mhndev\oauthClient\interfaces\object\iUserToken;
 
 /**
  * Interface iUserTokenRepository
@@ -11,17 +11,17 @@ interface iUserTokenRepository
 {
 
     /**
-     * @param string $username
-     * @return iToken
+     * @param int $userId
+     * @return iUserToken
      */
-    function findByUsername(string $username);
+    function findByUserId(int $userId);
 
 
     /**
-     * @param string $username
-     * @param iToken $token
+     * @param int $userId
+     * @param iUserToken $token
      * @return mixed
      */
-    function writeOrUpdate(string $username, iToken $token);
+    function writeOrUpdate(int $userId, iUserToken $token);
 
 }
