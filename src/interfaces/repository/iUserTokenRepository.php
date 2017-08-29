@@ -24,4 +24,16 @@ interface iUserTokenRepository
      */
     function writeOrUpdate(int $userId, iUserToken $token);
 
+    /**
+     * @param iUserToken $token
+     * @return iUserToken
+     */
+    function insert(iUserToken $token);
+
+    /**
+     * @param iUserToken $token
+     * @return iUserToken
+     */
+    function update(iUserToken $token);
+
 }

@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace mhndev\oauthClient\objects;
+namespace mhndev\oauthClient\Objects;
 
 use mhndev\oauthClient\interfaces\object\iUserToken;
 
@@ -21,15 +21,21 @@ class UserToken implements iUserToken
      * @param $access_token
      * @param $refresh_token
      * @param $user_id
+     * @param $expires_in
      * @param $expires_at
      */
-    public function __construct($id, $access_token, $refresh_token, $user_id, $expires_at)
+    public function __construct($id, $access_token, $refresh_token, $user_id, $expires_in = null, $expires_at = null)
     {
         $this->id = $id;
         $this->access_token = $access_token;
         $this->refresh_token = $refresh_token;
         $this->user_id = $user_id;
-        $this->expires_at = $expires_at;
+        if ($expires_at){
+            $this->expires_at = $expires_at;
+        }
+        if ($expires_in){
+            $this->expires_at = time() + $expires_in;
+        }
     }
 
     /**
@@ -124,17 +130,20 @@ class UserToken implements iUserToken
     /**
      * @return int
      */
-    public function getUserId(): int
+    public function getUserId()
     {
         return $this->user_id;
     }
 
     /**
      * @param int $user_id
+     * @return $this
      */
     public function setUserId(int $user_id)
     {
         $this->user_id = $user_id;
+
+        return $this;
     }
 
     /**
@@ -159,17 +168,40 @@ class UserToken implements iUserToken
         ];
     }
 
-
+    /**
+     * @param $array
+     * @return static
+     */
     public static function fromOptions($array)
     {
         $id = !empty($array['id']) ? $array['id'] : null;
+        $userId = !empty($array['user_id']) ? $array['user_id'] : null;
 
         return new static(
             $id,
             $array['access_token'],
             $array['refresh_token'],
-            $array['user_id'],
+            $userId,
+            null,
             $array['expires_at']
+        );
+    }
+
+    /**
+     * @param $array
+     * @return static
+     */
+    public static function fromOauthArray($array)
+    {
+        $id = !empty($array['id']) ? $array['id'] : null;
+        $userId = !empty($array['user_id']) ? $array['user_id'] : null;
+
+        return new static(
+            $id,
+            $array['access_token'],
+            $array['refresh_token'],
+            $userId,
+            $array['expires_in']
         );
     }
 }

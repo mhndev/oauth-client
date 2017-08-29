@@ -12,7 +12,7 @@ use mhndev\oauthClient\Objects\Identifier;
 use mhndev\oauthClient\Objects\Token;
 use mhndev\oauthClient\Objects\TokenInfo;
 use mhndev\oauthClient\Objects\User;
-use mhndev\oauthClient\objects\UserToken;
+use mhndev\oauthClient\Objects\UserToken;
 
 /**
  * Class Client
@@ -107,6 +107,7 @@ class Client implements iOAuthClient
         string $grant_type = 'password'
     )
     {
+
         $arrayToken = $this->handler->getUserTokenFromOAuthServer(
             $username,
             $password,
@@ -115,7 +116,7 @@ class Client implements iOAuthClient
         );
 
 
-        $token = UserToken::fromOptions($arrayToken);
+        $token = UserToken::fromOauthArray($arrayToken);
 
         return $token;
     }

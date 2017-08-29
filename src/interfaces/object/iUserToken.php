@@ -33,6 +33,12 @@ interface iUserToken
     function getUserId();
 
     /**
+     * @param int $id
+     * @return $this
+     */
+    function setUserId(int $id);
+
+    /**
      * @return int
      */
     function getExpiresAt();

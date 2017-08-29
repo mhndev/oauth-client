@@ -125,14 +125,17 @@ class ClientTokenHandle extends Client implements iOAuthClient
     {
         try {
             $userToken = $this->userTokenRepository->findByUserId($userId);
-
             if ($userToken->getExpiresAt() <= time()) {
-                $userToken = $this->getNewUserToken($userId, $client_id, $password, $grant_type);
-                $this->userTokenRepository->writeOrUpdate($userToken->getId(),$userToken);
+                $id = $userToken->getId();
+                $userToken = $this->getNewUserToken($username, $password,$client_id, $grant_type);
+                $userToken->setUserId($userId)->setId($id);
+
+                $userToken = $this->userTokenRepository->update($userToken);
             }
-        } catch (ModelNotFoundException $e) {
-            $userToken = $this->getNewUserToken($userId, $client_id, $password, $grant_type);
-            $this->userTokenRepository->writeOrUpdate($userToken->getId(),$userToken);
+        } catch (\Exception $e) {
+            $userToken = $this->getNewUserToken($username, $password,$client_id, $grant_type);
+            $userToken->setUserId($userId);
+            $userToken = $this->userTokenRepository->insert($userToken);
         }
 
         return $userToken;
