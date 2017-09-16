@@ -48,7 +48,7 @@ class ClientTokenHandle extends Client implements iOAuthClient
     public function __construct(
         iHandler $handler,
         iTokenRepository $tokenRepository,
-        iUserTokenRepository $userTokenRepository
+        iUserTokenRepository $userTokenRepository = null
     )
     {
         parent::__construct($handler);
