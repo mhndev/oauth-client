@@ -5,6 +5,8 @@ namespace mhndev\oauthClient\handlers;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ServerException;
 use mhndev\oauthClient\exceptions\ClientNotFoundException;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\IdentifierNotFoundOnOauthServer;
@@ -94,7 +96,6 @@ class GuzzleHandler implements iHandler
      */
     public function getTokenInfo($token)
     {
-
         try {
             $response = $this->httpClient->get($this->endpoint(__FUNCTION__), [
                 'headers' => [
@@ -189,7 +190,26 @@ class GuzzleHandler implements iHandler
             }
 
             throw new OAuthServerBadResponseException($e->getMessage());
-        } catch (\Exception $e) {
+        }catch (ServerException $e){
+
+            $message = '500 Error : oauth server says :'.json_decode((string) $e->getResponse()->getBody(), true)['error']['message'].
+                'probably invalid client_id and client_secret combination';
+            throw new \Exception($message);
+        }
+
+        catch (RequestException $e){
+            throw new \Exception(
+                sprintf(
+                    'Invalid Server Response Probably due to invalid 
+                    request params : check request params : grant_type, client_id, client_secret. 
+                    given request params are : %s', json_encode($json)
+                )
+            );
+
+        }
+
+        catch (\Exception $e) {
+
             throw $e;
         }
 
@@ -439,7 +459,8 @@ class GuzzleHandler implements iHandler
      */
     public function getUsers(array $userIds, $token, $returnIdentifiers = true)
     {
-        $uri = $this->serverUrl . '/api/getUsers';
+        $uri = $this->endpoint(__FUNCTION__);
+
         $options = [
             'headers' => [
                 'Accept' => 'application/json',
@@ -870,49 +891,49 @@ class GuzzleHandler implements iHandler
         switch ($method) {
 
             case 'getClientTokenFromOAuthServer':
-                return $this->serverUrl . '/api/auth/token';
+                return rtrim($this->serverUrl, '/') . '/api/auth/token';
                 break;
 
             case 'getUserTokenFromOAuthServer':
-                return $this->serverUrl . '/api/auth/token';
+                return rtrim($this->serverUrl, '/') . '/api/auth/token';
                 break;
 
             case 'getTokenInfo':
-                return $this->serverUrl . '/api/getTokenInfo';
+                return rtrim($this->serverUrl, '/') . '/api/getTokenInfo';
                 break;
 
             case 'getWhois':
-                return $this->serverUrl . '/api/whois';
+                return rtrim($this->serverUrl, '/') . '/api/whois';
                 break;
 
             case 'register':
-                return $this->serverUrl . '/api/registerOrGetUser';
+                return rtrim($this->serverUrl, '/') . '/api/registerOrGetUser';
                 break;
 
             case 'getUsers':
-                return $this->serverUrl . '/api/getUsers';
+                return rtrim($this->serverUrl, '/') . '/api/getUsers';
                 break;
 
             case 'addIdentifier':
-                return $this->serverUrl . '/api/addIdentifier';
+                return rtrim($this->serverUrl, '/') . '/api/addIdentifier';
                 break;
 
             case 'removeIdentifier':
-                return $this->serverUrl . '/api/removeUserIdentifier';
+                return rtrim($this->serverUrl, '/') . '/api/removeUserIdentifier';
                 break;
 
             case 'verifyIdentifier' :
-                return $this->serverUrl . '/api/verifyIdentifier';
+                return rtrim($this->serverUrl, '/') . '/api/verifyIdentifier';
                 break;
             case 'unverifyIdentifier' :
-                return $this->serverUrl . '/api/unverifyUserIdentifiers';
+                return rtrim($this->serverUrl, '/') . '/api/unverifyUserIdentifiers';
                 break;
             case 'searchForUser':
-                return $this->serverUrl . '/api/searchForUser';
+                return rtrim($this->serverUrl, '/') . '/api/searchForUser';
                 break;
                 break;
             case 'verifyIdentifierByAdmin':
-                return $this->serverUrl . '/api/verifyUserIdentifier';
+                return rtrim($this->serverUrl, '/') . '/api/verifyUserIdentifier';
                 break;
 
         }
