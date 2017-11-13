@@ -261,9 +261,10 @@ class Identifiers extends Collection
     }
 
     /**
+     * @param bool $nested
      * @return array
      */
-    public function toArray()
+    public function toArray($nested = true)
     {
         $result = [];
         if (!empty($this->items)){
