@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
+use function GuzzleHttp\Psr7\str;
 use mhndev\oauthClient\exceptions\ClientNotFoundException;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\IdentifierNotFoundOnOauthServer;
@@ -623,7 +624,8 @@ class GuzzleHandler implements iHandler
      * @param $identifier_type
      * @param $sessionChallenge
      * @param $clientId
-     * @return mixed
+     * @return boolean
+     *
      * @throws ConnectOAuthServerException
      * @throws InvalidIdentifierException
      * @throws InvalidTokenException
@@ -686,8 +688,7 @@ class GuzzleHandler implements iHandler
 
         $result = $this->getResult($response);
 
-        return $result;
-
+       return boolval($result['result']);
     }
 
 

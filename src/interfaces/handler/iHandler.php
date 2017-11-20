@@ -123,7 +123,7 @@ interface iHandler
      * @param $identifier_type
      * @param $sessionChallenge
      * @param $clientId
-     * @return mixed
+     * @return boolean
      */
     public function verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge, $clientId);
 

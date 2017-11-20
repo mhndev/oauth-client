@@ -123,8 +123,9 @@ class Client implements iOAuthClient
 
 
     /**
-     *
      * This method register new user to oauth server
+     *
+     * todo handle session challenge
      *
      * @param string $name
      * @param string $password
@@ -214,7 +215,7 @@ class Client implements iOAuthClient
      * @param $identifier_type
      * @param $sessionChallenge
      * @param $client_id
-     * @return true
+     * @return boolean
      */
     public function verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge, $client_id)
     {

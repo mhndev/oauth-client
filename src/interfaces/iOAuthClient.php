@@ -5,6 +5,7 @@ use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
 use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
 use mhndev\oauthClient\interfaces\entity\iToken;
+use mhndev\oauthClient\Objects\Identifier;
 use mhndev\oauthClient\Objects\TokenInfo;
 use mhndev\oauthClient\Objects\User;
 
@@ -104,5 +105,68 @@ interface iOAuthClient
      */
     public function getUsers(array $userIds, $token);
 
+
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return Identifier
+     */
+    public function addIdentifier($token, $identifier_value, $identifier_type);
+
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return true
+     */
+    public function removeIdentifier($token, $identifier_value, $identifier_type);
+
+    /**
+     * @param $token
+     * @param $identifier_value
+     * @param $identifier_type
+     * @param $sessionChallenge
+     * @param $client_id
+     * @return boolean
+     */
+    public function verifyIdentifier(
+        $token,
+        $identifier_value,
+        $identifier_type,
+        $sessionChallenge,
+        $client_id
+    );
+
+    /**
+     * @param $token
+     * @param $user_id
+     * @return true
+     */
+    public function unverifyIdentifier($token, $user_id);
+
+    /**
+     * @param $token
+     * @param $identifier_key
+     * @param $identifier_value
+     * @return mixed
+     */
+    public function searchForUser($token, $identifier_key, $identifier_value);
+
+    /**
+     * @param string $token
+     * @param string $identifierKey
+     * @param string $identifierValue
+     * @param integer $userId
+     * @return mixed
+     */
+    public function verifyIdentifierByAdmin(
+        $token,
+        $identifierKey,
+        $identifierValue,
+        $userId
+    );
 
 }
