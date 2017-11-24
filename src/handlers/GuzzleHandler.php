@@ -293,6 +293,9 @@ class GuzzleHandler implements iHandler
 
 
     /**
+     *
+     * todo : it won't work in case password is less than 6 characters
+     *
      * This method register new user to oauth server
      *
      * @param string $name
@@ -313,6 +316,7 @@ class GuzzleHandler implements iHandler
                 ])
             ]);
 
+
         } catch (ClientException $e) {
 
             // un processable entity (usually validation error)
@@ -331,6 +335,7 @@ class GuzzleHandler implements iHandler
 
         } catch (\Exception $e) {
             //do nothing
+
             throw $e;
         }
 
@@ -623,7 +628,6 @@ class GuzzleHandler implements iHandler
      * @param $identifier_value
      * @param $identifier_type
      * @param $sessionChallenge
-     * @param $clientId
      * @return boolean
      *
      * @throws ConnectOAuthServerException
@@ -632,30 +636,32 @@ class GuzzleHandler implements iHandler
      * @throws ValidationException
      * @throws \Exception
      */
-    public function verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge = null, $clientId)
+    public function verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge = null)
     {
         $uri = $this->endpoint(__FUNCTION__);
 
         $headers = [
-            'Accept' => 'application/json',
-            'Accept-Language' => 'fa'
+            'Accept' => 'application/json'
         ];
 
         $json = [
             $identifier_type => $identifier_value,
             'token' => $token,
-            'session_challenge' => $sessionChallenge,
-            'client_id' => $clientId
         ];
+
+        if(!empty($sessionChallenge)){
+            $json['session_challenge'] = $sessionChallenge;
+        }
+
 
         $options = [
             'headers' => $headers,
             'json' => $json
         ];
 
-
         try {
             $response = $this->httpClient->post($uri, $options);
+
         } catch (ConnectException $e) {
             throw new ConnectOAuthServerException(
                 sprintf(
@@ -667,6 +673,7 @@ class GuzzleHandler implements iHandler
         } catch (ClientException $e) {
 
             if ($e->getCode() == 401) {
+
                 throw new InvalidTokenException();
             }
 
@@ -677,7 +684,9 @@ class GuzzleHandler implements iHandler
             if ($e->getCode() == 422) {
 
                 throw $this->getValidationException($e->getResponse());
-            } else {
+            }
+
+            else {
                 throw $e;
             }
 

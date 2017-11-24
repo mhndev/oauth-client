@@ -129,15 +129,13 @@ interface iOAuthClient
      * @param $identifier_value
      * @param $identifier_type
      * @param $sessionChallenge
-     * @param $client_id
      * @return boolean
      */
     public function verifyIdentifier(
         $token,
         $identifier_value,
         $identifier_type,
-        $sessionChallenge,
-        $client_id
+        $sessionChallenge = null
     );
 
     /**

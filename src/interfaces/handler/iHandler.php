@@ -122,10 +122,9 @@ interface iHandler
      * @param $identifier_value
      * @param $identifier_type
      * @param $sessionChallenge
-     * @param $clientId
      * @return boolean
      */
-    public function verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge, $clientId);
+    public function verifyIdentifier($token, $identifier_value, $identifier_type, $sessionChallenge);
 
     /**
      * @param $token
