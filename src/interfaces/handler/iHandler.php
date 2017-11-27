@@ -5,6 +5,7 @@ use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\InvalidIdentifierType;
 use mhndev\oauthClient\exceptions\OAuthServerUnhandledError;
 use mhndev\oauthClient\exceptions\TokenInvalidOrExpiredException;
+use mhndev\oauthClient\interfaces\object\iToken;
 
 /**
  * Interface iHandler
@@ -33,6 +34,12 @@ interface iHandler
      */
     public function getClientTokenFromOAuthServer($client_id, $client_secret, array $scopes = []);
 
+
+    /**
+     * @param string $api_key
+     * @return iToken
+     */
+    public function getTokenByApiKey($api_key);
 
     /**
      * @param string $username

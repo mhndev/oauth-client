@@ -25,6 +25,7 @@ use mhndev\oauthClient\exceptions\ValidationException;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\object\iToken;
 use mhndev\oauthClient\Objects\Identifier;
+use mhndev\oauthClient\Objects\Token;
 use mhndev\oauthClient\Objects\User;
 use Psr\Http\Message\ResponseInterface;
 
@@ -217,6 +218,54 @@ class GuzzleHandler implements iHandler
 
         return $this->getResult($response);
     }
+
+
+    /**
+     * todo return token object
+     *
+     *
+     * @param string $api_key
+     * @return string
+     * @throws ConnectOAuthServerException
+     */
+    public function getTokenByApiKey($api_key)
+    {
+        $uri = $this->endpoint(__FUNCTION__);
+
+        $json = [
+            'grant_type' => 'api_key',
+            'api_key' => $api_key,
+        ];
+
+        $options = [
+            'headers' => [
+                'Accept' => 'application/json'
+            ],
+            'json' => $json
+        ];
+
+
+        try {
+            $response = $this->httpClient->post($uri, $options);
+
+        } catch (ConnectException $e) {
+
+            throw new ConnectOAuthServerException(
+                sprintf(
+                    'could not establish connection to oauth server (%s)',
+                    $this->serverUrl
+                )
+            );
+
+        } catch (ClientException $e){
+            throw new TokenInvalidOrExpiredException(sprintf(
+                'api_key is not valid'
+            ));
+        }
+        return $this->getResult($response)['access_token'];
+
+    }
+
 
 
     /**
@@ -944,6 +993,10 @@ class GuzzleHandler implements iHandler
                 break;
             case 'verifyIdentifierByAdmin':
                 return rtrim($this->serverUrl, '/') . '/api/verifyUserIdentifier';
+                break;
+
+            case 'getTokenByApiKey':
+                return rtrim($this->serverUrl, '/') . '/api/auth/token';
                 break;
 
         }

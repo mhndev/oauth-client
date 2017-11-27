@@ -53,6 +53,17 @@ class Client implements iOAuthClient
         return TokenInfo::fromArray($arrayTokenInfo['result']);
     }
 
+
+    /**
+     * @param string $api_key
+     * @return iToken
+     */
+    public function getTokenByApiKey($api_key)
+    {
+        return $this->handler->getTokenByApiKey($api_key);
+    }
+
+
     /**
      * This method checks if there is any token for specified client_id in table
      * or not, if there is any it also checks token expired_at field

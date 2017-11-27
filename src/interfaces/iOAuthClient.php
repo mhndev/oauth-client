@@ -63,6 +63,14 @@ interface iOAuthClient
     );
 
 
+
+    /**
+     * @param string $api_key
+     * @return iToken
+     */
+    public function getTokenByApiKey($api_key);
+
+
     /**
      *
      * This method register new user to oauth server
