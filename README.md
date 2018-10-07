@@ -39,6 +39,14 @@ $guzzleHandler = new \mhndev\oauthClient\handlers\GuzzleHandler(
     'http://dev.digipeyk.com:8030'
 );
 
+// if you want to pass api ednpoints and you are not going to use default endpoints please pass the third argument as follow:
+// consider you can just override as many endpoint as you want, and you are not forced to override all endpoints
+$guzzleHandler = new \mhndev\oauthClient\handlers\GuzzleHandler(
+    $guzzleClient,
+    'http://dev.digipeyk.com:8030',
+    ['removeIdentifier' => '/api/removeUserIdentifier']
+);
+
 $oauth_client = new \mhndev\oauthClient\Client($guzzleHandler, $tokenRepository);
 
 $token = $oauth_client->getClientToken($client_id, $client_secret);
