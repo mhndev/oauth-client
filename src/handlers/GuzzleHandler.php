@@ -57,7 +57,6 @@ use Psr\Http\Message\ResponseInterface;
 class GuzzleHandler implements iHandler
 {
 
-
     /**
      * @var Client
      */
@@ -71,15 +70,22 @@ class GuzzleHandler implements iHandler
 
 
     /**
-     * GuzzleHandler constructor.
-     *
-     * @param Client $client
-     * @param $serverUrl
+     * @var array
      */
-    public function __construct(Client $client, $serverUrl)
+    protected $endpoints = [];
+
+
+    /**
+     * GuzzleHandler constructor.
+     * @param Client $client
+     * @param string $serverUrl
+     * @param array $endpoints
+     */
+    public function __construct(Client $client, string $serverUrl, array $endpoints = [])
     {
         $this->httpClient = $client;
         $this->serverUrl = $serverUrl;
+        $this->endpoints = $endpoints;
     }
 
 
@@ -127,6 +133,7 @@ class GuzzleHandler implements iHandler
             throw new OAuthServerConnectionException($e->getMessage(), $e->getCode());
 
         } catch (\Exception $e) {
+
             /*
              * do nothing, here is when there is an error which I never thought of and should
              * handled in someway
@@ -140,8 +147,9 @@ class GuzzleHandler implements iHandler
 
 
     /**
-     * @param $client_id
-     * @param $client_secret
+     * Get token for oauth client (client_credentials grant)
+     * @param string $client_id
+     * @param string $client_secret
      * @param array $scopes
      * @return mixed
      * @throws ClientNotFoundException
@@ -149,7 +157,11 @@ class GuzzleHandler implements iHandler
      * @throws OAuthServerBadResponseException
      * @throws \Exception
      */
-    public function getClientTokenFromOAuthServer($client_id, $client_secret, array $scopes = [])
+    public function getClientTokenFromOAuthServer(
+        string $client_id,
+        string $client_secret,
+        array $scopes = []
+    )
     {
         $uri = $this->endpoint(__FUNCTION__);
 
@@ -218,6 +230,7 @@ class GuzzleHandler implements iHandler
 
         return $this->getResult($response);
     }
+    
 
 
     /**
@@ -947,6 +960,12 @@ class GuzzleHandler implements iHandler
      */
     protected function endpoint($method)
     {
+        if(!empty($this->endpoints[$method])) {
+            return rtrim($this->serverUrl, '/') .
+                '/' .
+                ltrim($this->endpoints[$method]);
+        }
+
         switch ($method) {
 
             case 'getClientTokenFromOAuthServer':
@@ -984,13 +1003,16 @@ class GuzzleHandler implements iHandler
             case 'verifyIdentifier' :
                 return rtrim($this->serverUrl, '/') . '/api/verifyIdentifier';
                 break;
+
             case 'unverifyIdentifier' :
                 return rtrim($this->serverUrl, '/') . '/api/unverifyUserIdentifiers';
                 break;
+
             case 'searchForUser':
                 return rtrim($this->serverUrl, '/') . '/api/searchForUser';
                 break;
                 break;
+
             case 'verifyIdentifierByAdmin':
                 return rtrim($this->serverUrl, '/') . '/api/verifyUserIdentifier';
                 break;
@@ -1002,6 +1024,15 @@ class GuzzleHandler implements iHandler
         }
 
 
+    }
+
+
+    /**
+     * @param array $endpoints
+     */
+    public function setEndpoints(array $endpoints)
+    {
+        $this->endpoints = $endpoints;
     }
 
 
