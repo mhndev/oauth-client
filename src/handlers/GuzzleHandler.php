@@ -7,7 +7,6 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
-use function GuzzleHttp\Psr7\str;
 use mhndev\oauthClient\exceptions\ClientNotFoundException;
 use mhndev\oauthClient\exceptions\ConnectOAuthServerException;
 use mhndev\oauthClient\exceptions\IdentifierNotFoundOnOauthServer;
@@ -25,7 +24,6 @@ use mhndev\oauthClient\exceptions\ValidationException;
 use mhndev\oauthClient\interfaces\handler\iHandler;
 use mhndev\oauthClient\interfaces\object\iToken;
 use mhndev\oauthClient\Objects\Identifier;
-use mhndev\oauthClient\Objects\Token;
 use mhndev\oauthClient\Objects\User;
 use Psr\Http\Message\ResponseInterface;
 
@@ -157,11 +155,7 @@ class GuzzleHandler implements iHandler
      * @throws OAuthServerBadResponseException
      * @throws \Exception
      */
-    public function getClientTokenFromOAuthServer(
-        string $client_id,
-        string $client_secret,
-        array $scopes = []
-    )
+    public function getClientTokenFromOAuthServer($client_id, $client_secret, array $scopes = [])
     {
         $uri = $this->endpoint(__FUNCTION__);
 
@@ -230,7 +224,6 @@ class GuzzleHandler implements iHandler
 
         return $this->getResult($response);
     }
-    
 
 
     /**
@@ -240,6 +233,7 @@ class GuzzleHandler implements iHandler
      * @param string $api_key
      * @return string
      * @throws ConnectOAuthServerException
+     * @throws TokenInvalidOrExpiredException
      */
     public function getTokenByApiKey($api_key)
     {
@@ -371,7 +365,10 @@ class GuzzleHandler implements iHandler
     {
         try {
             $response = $this->httpClient->post($this->endpoint(__FUNCTION__), [
-                'headers' => ['Accept' => 'application/json'],
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => (string) $token
+                ],
                 'json' => array_merge($identifiers, [
                     'name' => $name,
                     'password' => $password
@@ -391,12 +388,21 @@ class GuzzleHandler implements iHandler
                 );
 
                 throw $this->getValidationException($e->getResponse());
-            } else {
+            }
+
+            else if($e->getResponse()->getStatusCode() == 401) {
+                # invalid client token (expired or ...)
+            }
+
+            else {
+
+
                 throw $e;
             }
 
         } catch (\Exception $e) {
             //do nothing
+            die(1000);
 
             throw $e;
         }
@@ -410,6 +416,7 @@ class GuzzleHandler implements iHandler
      * @param array $identifiers
      * @param string $token
      * @throws UserAlreadyExistOnOauthServer
+     * @throws InvalidIdentifierType
      */
     protected function ifUserAlreadyExistThrowException(
         ResponseInterface $registerEndpointResponse,
@@ -462,7 +469,6 @@ class GuzzleHandler implements iHandler
      * @param string $token
      *
      * @return array
-     * @throws InvalidIdentifierType
      * @throws \Exception
      */
     public function getWhois($identifier_type, $identifier_value, $token)
@@ -759,7 +765,7 @@ class GuzzleHandler implements iHandler
 
         $result = $this->getResult($response);
 
-       return boolval($result['result']);
+        return boolval($result['result']);
     }
 
 
@@ -768,7 +774,6 @@ class GuzzleHandler implements iHandler
      * @param  int $user_id
      * @return mixed
      * @throws ConnectOAuthServerException
-     * @throws InvalidIdentifierException
      * @throws InvalidTokenException
      * @throws ValidationException
      * @throws \Exception
@@ -960,10 +965,10 @@ class GuzzleHandler implements iHandler
      */
     protected function endpoint($method)
     {
-        if(!empty($this->endpoints[$method])) {
+        if(!empty($this->endpoints[$method]) ) {
             return rtrim($this->serverUrl, '/') .
                 '/' .
-                ltrim($this->endpoints[$method]);
+                ltrim($this->endpoints[$method], '/');
         }
 
         switch ($method) {

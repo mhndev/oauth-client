@@ -50,7 +50,7 @@ class Client implements iOAuthClient
     {
         $arrayTokenInfo = $this->handler->getTokenInfo($token);
 
-        return TokenInfo::fromArray($arrayTokenInfo['result']);
+        return TokenInfo::fromArray($arrayTokenInfo);
     }
 
 
@@ -77,7 +77,7 @@ class Client implements iOAuthClient
      * @param array $scopes
      * @return iToken
      */
-    public function getClientToken($client_id, $client_secret, array $scopes =[])
+    public function getClientToken($client_id, $client_secret, array $scopes = [])
     {
         return $this->getNewClientToken($client_id, $client_secret, $scopes);
     }
@@ -88,7 +88,7 @@ class Client implements iOAuthClient
      * @param array $scopes
      * @return iToken
      */
-    public function getNewClientToken($client_id, $client_secret, array $scopes  =[])
+    public function getNewClientToken($client_id, $client_secret, array $scopes = [])
     {
         $arrayToken = $this->handler->getClientTokenFromOAuthServer(
             $client_id,
@@ -144,10 +144,11 @@ class Client implements iOAuthClient
      * @param string $token
      * @return User
      * @internal param array $identifiers
+     * @throws \Exception
      */
     public function register($name, $password, array $identifiers, $token)
     {
-        $arrayUser = $this->handler->register($name, $password, $identifiers, $token)['result'];
+        $arrayUser = $this->handler->register($name, $password, $identifiers, $token);
 
         return User::fromArray($arrayUser);
     }
@@ -198,12 +199,13 @@ class Client implements iOAuthClient
      * @param $identifier_value
      * @param $identifier_type
      * @return Identifier
+     * @throws exceptions\ConnectOAuthServerException
      */
     public function addIdentifier($token, $identifier_value, $identifier_type)
     {
         $identifierArray = $this->handler->addIdentifier($token, $identifier_value, $identifier_type);
 
-       return Identifier::fromArray($identifierArray);
+        return Identifier::fromArray($identifierArray);
 
     }
 
@@ -213,6 +215,8 @@ class Client implements iOAuthClient
      * @param $identifier_value
      * @param $identifier_type
      * @return true
+     * @throws TokenInvalidOrExpiredException
+     * @throws exceptions\ConnectOAuthServerException
      */
     public function removeIdentifier($token, $identifier_value, $identifier_type)
     {
@@ -260,7 +264,7 @@ class Client implements iOAuthClient
      */
     public function searchForUser($token, $identifier_key, $identifier_value)
     {
-        $users = $this->handler->searchForUser($token, $identifier_key, $identifier_value)['result'];
+        $users = $this->handler->searchForUser($token, $identifier_key, $identifier_value);
 
         return array_map(function ($user) {
             return User::fromArray($user);
@@ -279,22 +283,22 @@ class Client implements iOAuthClient
         return $this->handler->verifyIdentifierByAdmin($token, $identifierKey, $identifierValue, $userId);
     }
 
+
     /**
      * @param int $userId
      * @param string $username
      * @param string|null $client_id
      * @param string|null $password
      * @param string $grant_type
-     * @return interfaces\entity\iToken
+     * @return void
      */
-    public function getUserToken(
-        int $userId,
-        string $username = null,
-        string $client_id = null,
-        string $password = null,
-        string $grant_type = 'password'
-    )
+    public function getUserToken(int $userId,
+                                 string $username,
+                                 string $client_id = null,
+                                 string $password = null,
+                                 string $grant_type = 'password')
     {
         // TODO: Implement getUserToken() method.
     }
+
 }
